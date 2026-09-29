@@ -37,6 +37,25 @@ npm run dev
 
 L’API écoute sur http://localhost:4100 et le front (Vite) relaie `/api` vers elle.
 
+## Déploiement
+
+Le frontend utilise automatiquement `/api/v1` via le proxy Vite en local et
+`https://parapharmacie-ssgh.onrender.com/api/v1` en production. Pour un autre serveur,
+définir `VITE_API_URL` dans l'environnement de build du frontend (avec le suffixe `/api/v1`),
+puis relancer le build.
+
+Sur Render, le service API doit utiliser le dossier `server` comme **Root Directory**, avec
+`npm install && npx prisma generate` comme **Build Command** et `npm start` comme **Start Command**.
+Configurer `DATABASE_URL` vers une base MySQL/MariaDB persistante, `JWT_SECRET` avec une valeur
+aléatoire longue et `NODE_ENV=production`. `CORS_ORIGIN` peut contenir les origines frontend
+autorisées séparées par des virgules ; si absent en production, l'API autorise toutes les origines
+(n'utilisant pas de cookies). Dans les variables Render, définir `CORS_ORIGIN=*` pour autoriser le
+frontend et les boutiques clientes sur leurs domaines. Le schéma doit être appliqué à la base avec
+`npx prisma db push`.
+
+Ne pas lancer `npm run db:seed` sur une base contenant des données à conserver : ce script vide
+les tables avant de recréer les comptes et données de démonstration.
+
 | Espace | URL | Contenu |
 |---|---|---|
 | Landing SaaS | `/` | Présentation, tarifs, FAQ, démo |

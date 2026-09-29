@@ -1,6 +1,9 @@
-/** Thin fetch wrapper for the Paraflow REST API (/api/v1, proxied to the Express server in dev). */
-
-export const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://parapharmacie-ssgh.onrender.com/api/v1'
+/** Use Vite's proxy locally and the deployed API in production. VITE_API_URL can override either. */
+const configuredApiUrl = (import.meta.env.VITE_API_URL as string | undefined)?.trim()
+const defaultApiUrl = import.meta.env.PROD
+  ? 'https://parapharmacie-ssgh.onrender.com/api/v1'
+  : '/api/v1'
+export const API_BASE = (configuredApiUrl || defaultApiUrl).replace(/\/+$/, '')
 
 export class ApiError extends Error {
   constructor(public status: number, message: string, public details?: unknown) { super(message) }
@@ -15,7 +18,10 @@ export async function api<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: st
       body: body !== undefined ? JSON.stringify(body) : undefined,
     })
   } catch {
-    throw new ApiError(0, 'Serveur injoignable — vérifiez que l’API est démarrée (npm run dev dans server/)')
+    const message = import.meta.env.PROD
+      ? 'API inaccessible depuis le site : vérifiez le CORS du backend (CORS_ORIGIN=* sur Render) et son URL.'
+      : 'Serveur injoignable — vérifiez que l’API est démarrée (npm run dev dans server/).'
+    throw new ApiError(0, message)
   }
   const text = await res.text()
   const json = text ? (() => { try { return JSON.parse(text) } catch { return null } })() : null

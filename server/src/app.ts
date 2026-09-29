@@ -14,7 +14,7 @@ export function createApp() {
   const app = express()
   app.disable('x-powered-by')
   app.use(helmet())
-  app.use(cors({ origin: config.corsOrigins, credentials: false }))
+  app.use(cors({ origin: config.corsOrigins.includes('*') ? '*' : config.corsOrigins, credentials: false }))
   app.use(compression())
   app.use(express.json({ limit: '2mb' }))
 
