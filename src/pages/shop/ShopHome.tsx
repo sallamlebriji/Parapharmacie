@@ -54,7 +54,7 @@ export default function ShopHome() {
         <div className="absolute -right-20 -top-20 size-96 rounded-full bg-white/50 blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 chip bg-white/80 text-sage-700 border border-sage-200 h-7 px-3"><Leaf className="size-3.5" /> Dermo-cosmétique sélectionnée par nos pharmaciens</div>
+            <div className="inline-flex items-center gap-2 chip bg-surface/80 text-sage-700 border border-sage-200 h-7 px-3"><Leaf className="size-3.5" /> Dermo-cosmétique sélectionnée par nos pharmaciens</div>
             <h1 className="text-4xl md:text-6xl leading-[1.05] mt-5">La beauté qui prend <em className="text-sage-600 not-italic font-display italic">soin</em> de vous.</h1>
             <p className="text-muted mt-5 max-w-md text-lg">{t.tagline}. Plus de {active.length * 20} références, des routines conseillées et la livraison en 24 h.</p>
             <div className="mt-7 max-w-md hidden md:block"><SmartSearch big /></div>
@@ -64,9 +64,9 @@ export default function ShopHome() {
             </div>
           </div>
           <div className="relative h-80 md:h-[420px]">
-            <div className="absolute left-[8%] top-[10%] w-[46%] rotate-[-6deg] rounded-[2rem] overflow-hidden shadow-lift bg-white"><ProductVisual shape={hero[0].shape} color={hero[0].color} brand={hero[0].brand} className="w-full" /></div>
-            <div className="absolute right-[4%] top-0 w-[44%] rotate-[5deg] rounded-[2rem] overflow-hidden shadow-lift bg-white"><ProductVisual shape={hero[1].shape} color={hero[1].color} brand={hero[1].brand} className="w-full" /></div>
-            <div className="absolute left-[30%] bottom-0 w-[42%] rounded-[2rem] overflow-hidden shadow-lift bg-white"><ProductVisual shape={hero[2].shape} color={hero[2].color} brand={hero[2].brand} className="w-full" /></div>
+            <div className="absolute left-[8%] top-[10%] w-[46%] rotate-[-6deg] rounded-[2rem] overflow-hidden shadow-lift bg-surface"><ProductVisual shape={hero[0].shape} color={hero[0].color} brand={hero[0].brand} className="w-full" /></div>
+            <div className="absolute right-[4%] top-0 w-[44%] rotate-[5deg] rounded-[2rem] overflow-hidden shadow-lift bg-surface"><ProductVisual shape={hero[1].shape} color={hero[1].color} brand={hero[1].brand} className="w-full" /></div>
+            <div className="absolute left-[30%] bottom-0 w-[42%] rounded-[2rem] overflow-hidden shadow-lift bg-surface"><ProductVisual shape={hero[2].shape} color={hero[2].color} brand={hero[2].brand} className="w-full" /></div>
             <div className="absolute right-[6%] bottom-[12%] card px-4 py-3 shadow-lift"><div className="text-xs text-muted">Note moyenne</div><div className="font-semibold">★ 4,7 / 5 · 2 400 avis</div></div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function ShopHome() {
         <div className="grid md:grid-cols-3 gap-4">
           {d.packs.slice(0, 3).map((pk) => (
             <Link key={pk.id} to={`/boutique/routines#${pk.slug}`} className="card p-6 hover:shadow-lift transition group">
-              <div className="flex -space-x-4">{pk.productIds.map((id) => { const p = d.products.find((x) => x.id === id)!; return <ProductVisual key={id} shape={p.shape} color={p.color} brand={p.brand} className="size-16 rounded-2xl border-2 border-white shadow-soft" /> })}</div>
+              <div className="flex -space-x-4">{pk.productIds.map((id) => { const p = d.products.find((x) => x.id === id)!; return <ProductVisual key={id} shape={p.shape} color={p.color} brand={p.brand} className="size-16 rounded-2xl border-2 border-surface shadow-soft" /> })}</div>
               <div className="font-display text-lg mt-4">{pk.name}</div>
               <div className="text-sm text-muted">{pk.steps.join(' + ')}</div>
               <div className="flex items-center gap-2 mt-4"><span className="font-semibold">{money(pk.price)}</span><span className="text-sm text-soft line-through">{money(packValue(d, pk))}</span><span className="chip bg-sage-100 text-sage-700 ml-auto">−{money(packValue(d, pk) - pk.price)}</span></div>

@@ -31,10 +31,10 @@ const trend = [42, 48, 45, 52, 58, 55, 61, 66, 63, 71, 76, 74, 82, 88, 85, 93]
 
 function Frame({ children, url = 'app.paraflow.ma/admin', className }: { children: React.ReactNode; url?: string; className?: string }) {
   return (
-    <div className={cx('rounded-2xl border border-line bg-white shadow-[0_30px_80px_-20px_rgb(31_38_34/0.25)] overflow-hidden', className)}>
+    <div className={cx('rounded-2xl border border-line bg-surface shadow-[0_30px_80px_-20px_rgb(31_38_34/0.25)] overflow-hidden', className)}>
       <div className="h-9 flex items-center gap-1.5 px-4 border-b border-line bg-ivory">
         <span className="size-2.5 rounded-full bg-[#e9b8ae]" /><span className="size-2.5 rounded-full bg-[#ecd9a8]" /><span className="size-2.5 rounded-full bg-[#b9ccb9]" />
-        <span className="ml-4 text-[10px] text-soft bg-white border border-line rounded-md px-3 py-0.5">{url}</span>
+        <span className="ml-4 text-[10px] text-soft bg-surface border border-line rounded-md px-3 py-0.5">{url}</span>
       </div>
       {children}
     </div>
@@ -49,26 +49,26 @@ function DashboardMock() {
           <div className="flex items-center gap-2 mb-3"><Logo /></div>
           {[[LayoutDashboard, 'Dashboard'], [ShoppingBag, 'Commandes'], [Package, 'Produits'], [Boxes, 'Stock'], [CalendarClock, 'Lots'], [Users, 'Clients'], [Monitor, 'POS'], [BarChart3, 'Analytics']].map(([I, l], i) => {
             const Icon = I as typeof Package
-            return <div key={l as string} className={cx('flex items-center gap-2 px-2 py-1.5 rounded-md', i === 0 ? 'bg-sage-600 text-white' : 'text-muted')}><Icon className="size-3" />{l as string}</div>
+            return <div key={l as string} className={cx('flex items-center gap-2 px-2 py-1.5 rounded-md', i === 0 ? 'bg-accent text-on-accent' : 'text-muted')}><Icon className="size-3" />{l as string}</div>
           })}
         </div>
         <div className="p-4 bg-ivory">
           <div className="font-display text-base">Bonjour, Nadia</div>
           <div className="grid grid-cols-4 gap-2 mt-3">
             {[['CA 30 j', '486 250 DH', '+12,4 %'], ['Commandes du jour', '58', '+8 %'], ['Panier moyen', '312 DH', '+3,1 %'], ['Stock faible', '8', '']].map(([l, v, d]) => (
-              <div key={l} className="rounded-lg bg-white border border-line p-2"><div className="text-[9px] text-muted">{l}</div><div className="font-semibold text-[13px] mt-0.5">{v}</div>{d && <div className="text-[9px] text-sage-600">{d}</div>}</div>
+              <div key={l} className="rounded-lg bg-surface border border-line p-2"><div className="text-[9px] text-muted">{l}</div><div className="font-semibold text-[13px] mt-0.5">{v}</div>{d && <div className="text-[9px] text-sage-600">{d}</div>}</div>
             ))}
           </div>
           <div className="grid grid-cols-3 gap-2 mt-2">
-            <div className="col-span-2 rounded-lg bg-white border border-line p-2"><div className="text-[10px] font-medium mb-1">Chiffre d’affaires</div><Spark data={trend} height={110} /></div>
-            <div className="rounded-lg bg-white border border-line p-2 space-y-1.5">
+            <div className="col-span-2 rounded-lg bg-surface border border-line p-2"><div className="text-[10px] font-medium mb-1">Chiffre d’affaires</div><Spark data={trend} height={110} /></div>
+            <div className="rounded-lg bg-surface border border-line p-2 space-y-1.5">
               <div className="text-[10px] font-medium">Alertes importantes</div>
               <div className="rounded-md bg-amber-soft text-amber-ink px-2 py-1 text-[9px]">8 produits sous le seuil</div>
               <div className="rounded-md bg-rose-soft text-rose-ink px-2 py-1 text-[9px]">12 produits expirent bientôt</div>
               <div className="rounded-md bg-sky-soft text-sky-ink px-2 py-1 text-[9px]">14 commandes à préparer</div>
             </div>
           </div>
-          <div className="rounded-lg bg-white border border-line p-2 mt-2">
+          <div className="rounded-lg bg-surface border border-line p-2 mt-2">
             <div className="text-[10px] font-medium mb-1">Meilleures ventes</div>
             {[2, 26, 0].map((i) => { const p = P(i); return <div key={i} className="flex items-center gap-2 py-1"><ProductVisual shape={p.shape} color={p.color} brand={p.brand} className="size-6 rounded" /><span className="flex-1 truncate">{p.name}</span><span className="text-muted">{money(p.price)}</span></div> })}
           </div>
@@ -84,10 +84,10 @@ function PhoneMock() {
       <div className="h-5 bg-ink mx-auto w-24 rounded-b-xl" />
       <div className="p-3 text-[10px]">
         <div className="font-display text-sm">Parapharmacie Sève</div>
-        <div className="mt-2 rounded-full border border-line bg-white px-3 py-1.5 text-soft">Rechercher « peau sèche »…</div>
-        <div className="mt-3 rounded-2xl bg-gradient-to-br from-sage-100 to-champagne-100 p-3"><div className="font-display text-sm leading-tight">La beauté qui prend soin de vous</div><div className="mt-2 inline-block rounded-full bg-sage-600 text-white px-2 py-0.5">Trouver ma routine</div></div>
+        <div className="mt-2 rounded-full border border-line bg-surface px-3 py-1.5 text-soft">Rechercher « peau sèche »…</div>
+        <div className="mt-3 rounded-2xl bg-gradient-to-br from-sage-100 to-champagne-100 p-3"><div className="font-display text-sm leading-tight">La beauté qui prend soin de vous</div><div className="mt-2 inline-block rounded-full bg-accent text-on-accent px-2 py-0.5">Trouver ma routine</div></div>
         <div className="grid grid-cols-2 gap-2 mt-3">
-          {[4, 26, 17, 12].map((i) => { const p = P(i); return <div key={i} className="rounded-xl bg-white border border-line overflow-hidden"><ProductVisual shape={p.shape} color={p.color} brand={p.brand} className="w-full aspect-square" /><div className="p-1.5"><div className="truncate">{p.name}</div><div className="font-semibold">{money(p.price)}</div></div></div> })}
+          {[4, 26, 17, 12].map((i) => { const p = P(i); return <div key={i} className="rounded-xl bg-surface border border-line overflow-hidden"><ProductVisual shape={p.shape} color={p.color} brand={p.brand} className="w-full aspect-square" /><div className="p-1.5"><div className="truncate">{p.name}</div><div className="font-semibold">{money(p.price)}</div></div></div> })}
         </div>
       </div>
     </div>
@@ -145,7 +145,7 @@ export default function Landing() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-champagne-100),transparent_55%),radial-gradient(ellipse_at_top_left,var(--color-sage-100),transparent_50%)]" />
         <div className="relative max-w-7xl mx-auto px-4 pt-16 md:pt-24 pb-10 text-center">
-          <div className="inline-flex items-center gap-2 chip h-7 px-3 bg-white border border-line text-muted"><Sparkles className="size-3.5 text-champagne-400" /> ERP · POS · CRM · E-commerce · Fidélité — une seule plateforme</div>
+          <div className="inline-flex items-center gap-2 chip h-7 px-3 bg-surface border border-line text-muted"><Sparkles className="size-3.5 text-champagne-400" /> ERP · POS · CRM · E-commerce · Fidélité — une seule plateforme</div>
           <h1 className="text-4xl sm:text-5xl md:text-7xl leading-[1.04] mt-6 max-w-4xl mx-auto">La gestion intelligente de votre <em className="italic text-sage-600">parapharmacie</em>.</h1>
           <p className="text-lg md:text-xl text-muted mt-6 max-w-2xl mx-auto">Stock, ventes, commandes, clients et boutique en ligne réunis dans une seule plateforme.</p>
           <div className="flex flex-wrap justify-center gap-3 mt-8">
@@ -208,14 +208,14 @@ export default function Landing() {
           <Frame url="app.paraflow.ma/admin/pos">
             <div className="grid grid-cols-5 text-xs">
               <div className="col-span-3 p-3 grid grid-cols-3 gap-2 bg-ivory">
-                <div className="col-span-3 rounded-lg border border-line bg-white px-2 py-1.5 flex items-center gap-2 text-soft"><ScanBarcode className="size-3.5 text-sage-500" /> 6113000104729</div>
-                {[0, 2, 26, 43, 19, 11].map((i) => { const p = P(i); return <div key={i} className="rounded-lg bg-white border border-line p-1.5"><ProductVisual shape={p.shape} color={p.color} brand={p.brand} className="w-full aspect-[4/3] rounded" /><div className="truncate mt-1">{p.name}</div><div className="font-semibold">{money(p.price)}</div></div> })}
+                <div className="col-span-3 rounded-lg border border-line bg-surface px-2 py-1.5 flex items-center gap-2 text-soft"><ScanBarcode className="size-3.5 text-sage-500" /> 6113000104729</div>
+                {[0, 2, 26, 43, 19, 11].map((i) => { const p = P(i); return <div key={i} className="rounded-lg bg-surface border border-line p-1.5"><ProductVisual shape={p.shape} color={p.color} brand={p.brand} className="w-full aspect-[4/3] rounded" /><div className="truncate mt-1">{p.name}</div><div className="font-semibold">{money(p.price)}</div></div> })}
               </div>
               <div className="col-span-2 p-3 border-l border-line flex flex-col">
                 <div className="font-medium">Ticket</div>
                 {[0, 26].map((i) => { const p = P(i); return <div key={i} className="flex justify-between py-1.5 border-b border-line"><span className="truncate pr-2">{p.name}</span><span>{money(p.price)}</span></div> })}
                 <div className="mt-auto pt-3 flex justify-between font-semibold text-sm"><span>Total</span><span>{money(P(0).price + P(26).price)}</span></div>
-                <div className="grid grid-cols-2 gap-1.5 mt-2"><span className="rounded-md bg-sage-600 text-white text-center py-1.5"><CreditCard className="size-3 inline" /> Carte</span><span className="rounded-md bg-champagne-400 text-white text-center py-1.5">Espèces</span></div>
+                <div className="grid grid-cols-2 gap-1.5 mt-2"><span className="rounded-md bg-accent text-on-accent text-center py-1.5"><CreditCard className="size-3 inline" /> Carte</span><span className="rounded-md bg-champagne-400 text-white text-center py-1.5">Espèces</span></div>
               </div>
             </div>
           </Frame>
@@ -234,9 +234,9 @@ export default function Landing() {
           <Frame url="app.paraflow.ma/admin/boutiques">
             <div className="p-4 grid grid-cols-3 gap-2 text-xs bg-ivory">
               {[['Sève Meknès', '212 480 DH', '+9 %', 44], ['Sève Fès', '148 900 DH', '+14 %', 31], ['Sève Rabat', '124 870 DH', '+21 %', 25]].map(([n, v, d, s]) => (
-                <div key={n as string} className="rounded-lg bg-white border border-line p-3"><div className="font-display text-sm">{n}</div><div className="font-semibold text-base mt-2">{v}</div><div className="text-sage-600 text-[10px]">{d} vs mois préc.</div><div className="h-1.5 rounded-full bg-cream mt-2"><div className="h-full rounded-full bg-sage-500" style={{ width: `${(s as number) * 2}%` }} /></div><div className="text-[10px] text-muted mt-1">{s} % du CA</div></div>
+                <div key={n as string} className="rounded-lg bg-surface border border-line p-3"><div className="font-display text-sm">{n}</div><div className="font-semibold text-base mt-2">{v}</div><div className="text-sage-600 text-[10px]">{d} vs mois préc.</div><div className="h-1.5 rounded-full bg-cream mt-2"><div className="h-full rounded-full bg-sage-500" style={{ width: `${(s as number) * 2}%` }} /></div><div className="text-[10px] text-muted mt-1">{s} % du CA</div></div>
               ))}
-              <div className="col-span-3 rounded-lg bg-white border border-line p-2"><Spark data={[...trend].reverse().map((x, i) => x + (i % 3) * 6)} height={90} color="#c9a96e" /></div>
+              <div className="col-span-3 rounded-lg bg-surface border border-line p-2"><Spark data={[...trend].reverse().map((x, i) => x + (i % 3) * 6)} height={90} color="#c9a96e" /></div>
             </div>
           </Frame>
         </Showcase>
@@ -252,7 +252,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-5 mt-10">
             {PLANS.map((p) => (
               <div key={p.id} className={cx('card p-7 flex flex-col relative', p.id === 'pro' && 'ring-2 ring-sage-500 md:-translate-y-3')}>
-                {p.id === 'pro' && <span className="absolute -top-3 left-1/2 -translate-x-1/2 chip bg-sage-600 text-white h-6 px-3">Le plus choisi</span>}
+                {p.id === 'pro' && <span className="absolute -top-3 left-1/2 -translate-x-1/2 chip bg-accent text-on-accent h-6 px-3">Le plus choisi</span>}
                 <div className="font-display text-2xl">{p.name}</div>
                 <p className="text-sm text-muted mt-1 min-h-10">{p.description}</p>
                 <div className="mt-5"><span className="text-4xl font-semibold">{money(cycle === 'mois' ? p.price : Math.round(p.yearly / 12))}</span><span className="text-muted text-sm"> / mois HT</span></div>
@@ -287,7 +287,7 @@ export default function Landing() {
             <p className="text-sage-100 mt-4">30 minutes avec un expert, en visio ou dans votre parapharmacie. Nous importons un extrait de votre catalogue pour une démo sur mesure.</p>
             <ul className="mt-6 space-y-2 text-sm text-sage-100">{['Migration de vos données offerte', 'Formation de votre équipe incluse', 'Support basé au Maroc, en français et en arabe'].map((x) => <li key={x} className="flex gap-2"><Check className="size-4 text-champagne-200" />{x}</li>)}</ul>
           </div>
-          <form className="bg-white text-ink rounded-2xl p-6 space-y-3" onSubmit={(e) => { e.preventDefault(); if (!demo.name || !demo.phone) return toast('Nom et téléphone requis'); toast('Merci ! Un expert vous rappelle sous 24 h.'); setDemo({ name: '', pharmacy: '', city: '', phone: '' }) }}>
+          <form className="bg-surface text-ink rounded-2xl p-6 space-y-3" onSubmit={(e) => { e.preventDefault(); if (!demo.name || !demo.phone) return toast('Nom et téléphone requis'); toast('Merci ! Un expert vous rappelle sous 24 h.'); setDemo({ name: '', pharmacy: '', city: '', phone: '' }) }}>
             <Field label="Nom complet"><input className="input" value={demo.name} onChange={(e) => setDemo({ ...demo, name: e.target.value })} /></Field>
             <Field label="Parapharmacie"><input className="input" value={demo.pharmacy} onChange={(e) => setDemo({ ...demo, pharmacy: e.target.value })} /></Field>
             <div className="grid grid-cols-2 gap-3">

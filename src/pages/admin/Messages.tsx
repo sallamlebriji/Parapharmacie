@@ -48,7 +48,7 @@ export default function Messages() {
               <div className="flex-1 overflow-y-auto p-5 space-y-3 bg-ivory">
                 {thread.messages.map((m, i) => (
                   <div key={i} className={cx('flex', m.from === 'client' ? 'justify-start' : 'justify-end')}>
-                    <div className={cx('max-w-[75%] rounded-2xl px-4 py-2.5 text-sm', m.from === 'client' ? 'bg-white border border-line' : m.from === 'bot' ? 'bg-champagne-100 text-ink' : 'bg-sage-600 text-white')}>
+                    <div className={cx('max-w-[75%] rounded-2xl px-4 py-2.5 text-sm', m.from === 'client' ? 'bg-surface border border-line' : m.from === 'bot' ? 'bg-champagne-100 text-ink' : 'bg-accent text-on-accent')}>
                       {m.from === 'bot' && <div className="text-[10px] uppercase tracking-wider text-champagne-600 flex items-center gap-1 mb-1"><Bot className="size-3" /> Assistant automatique</div>}
                       {m.text}
                       <div className={cx('text-[10px] mt-1', m.from === 'staff' ? 'text-sage-100' : 'text-soft')}>{dateTime(m.date)}</div>

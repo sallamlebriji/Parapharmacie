@@ -62,7 +62,7 @@ export default function Signup() {
           <h2 className="text-3xl">Ce que vous obtenez immédiatement</h2>
           <ul className="mt-8 space-y-4">
             {['Votre espace dédié, votre logo et vos couleurs', 'Un catalogue de démarrage à personnaliser ou importer (CSV)', 'Caisse POS, stock par lots et alertes d’expiration', 'Votre boutique en ligne prête à publier', 'CRM, fidélité et campagnes marketing', 'Aucune donnée partagée avec les autres parapharmacies'].map((x) => (
-              <li key={x} className="flex gap-3"><span className="size-6 rounded-full bg-white grid place-items-center shrink-0"><Check className="size-3.5 text-sage-600" /></span>{x}</li>
+              <li key={x} className="flex gap-3"><span className="size-6 rounded-full bg-surface grid place-items-center shrink-0"><Check className="size-3.5 text-sage-600" /></span>{x}</li>
             ))}
           </ul>
         </div>

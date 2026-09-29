@@ -91,8 +91,8 @@ function Sale({ storeId }: { storeId: string }) {
           <button className="btn-secondary" title="Simuler un scan" onClick={() => { const p = d.products[Math.floor(Math.random() * d.products.length)]; scan(p.barcode); scanRef.current?.focus() }}><ScanBarcode className="size-4" /> Scan démo</button>
         </div>
         <div className="flex gap-1.5 overflow-x-auto scrollbar-thin pb-1">
-          <button onClick={() => setCat('')} className={cx('chip h-8 px-3 border cursor-pointer', !cat ? 'bg-sage-600 text-white border-sage-600' : 'bg-white border-line text-muted')}>Tout</button>
-          {CATEGORIES.map((c) => <button key={c.id} onClick={() => setCat(c.id)} className={cx('chip h-8 px-3 border cursor-pointer', cat === c.id ? 'bg-sage-600 text-white border-sage-600' : 'bg-white border-line text-muted')}>{c.label}</button>)}
+          <button onClick={() => setCat('')} className={cx('chip h-8 px-3 border cursor-pointer', !cat ? 'bg-accent text-on-accent border-sage-600' : 'bg-surface border-line text-muted')}>Tout</button>
+          {CATEGORIES.map((c) => <button key={c.id} onClick={() => setCat(c.id)} className={cx('chip h-8 px-3 border cursor-pointer', cat === c.id ? 'bg-accent text-on-accent border-sage-600' : 'bg-surface border-line text-muted')}>{c.label}</button>)}
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-thin pr-1">
           {products.map((p) => {
@@ -191,7 +191,7 @@ function Receipt({ order, onClose }: { order: Order; onClose: () => void }) {
   const c = d.customers.find((x) => x.id === order.customerId)
   return (
     <Modal open onClose={onClose} title="Vente enregistrée ✓" footer={<><button className="btn-secondary" onClick={() => window.print()}><Printer className="size-4" /> Imprimer le reçu</button><button className="btn-primary" onClick={onClose}>Nouvelle vente</button></>}>
-      <div className="mx-auto max-w-xs bg-white border border-dashed border-sand rounded-lg p-5 font-mono text-[12px] leading-relaxed">
+      <div className="mx-auto max-w-xs bg-surface border border-dashed border-sand rounded-lg p-5 font-mono text-[12px] leading-relaxed">
         <div className="text-center">
           <div className="font-display text-base font-sans">{t.name}</div>
           <div>{store.address}</div><div>{store.city} · {store.phone}</div>

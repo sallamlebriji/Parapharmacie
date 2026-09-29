@@ -62,7 +62,7 @@ function ProductView({ id }: { id: string }) {
             <div className="space-y-3">
               {views.map((v, i) => <button key={i} onClick={() => setView(i)} className={cx('block w-full aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition', view === i ? 'border-sage-500' : 'border-transparent opacity-70 hover:opacity-100')}>{v}</button>)}
             </div>
-            <div className="relative aspect-square rounded-3xl overflow-hidden border border-line bg-white">
+            <div className="relative aspect-square rounded-3xl overflow-hidden border border-line bg-surface">
               {views[view]}
               {pi.label && <span className="absolute top-4 left-4 chip bg-rose-ink text-white h-7 px-3 text-xs">{pi.label}</span>}
             </div>
@@ -91,7 +91,7 @@ function ProductView({ id }: { id: string }) {
           {stock > 0 ? (
             <>
               <div className="flex gap-3 mt-5">
-                <div className="flex items-center rounded-xl border border-line bg-white">
+                <div className="flex items-center rounded-xl border border-line bg-surface">
                   <button className="h-12 w-11 grid place-items-center cursor-pointer" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Moins"><Minus className="size-4" /></button>
                   <span className="w-8 text-center tabular-nums">{qty}</span>
                   <button className="h-12 w-11 grid place-items-center cursor-pointer" onClick={() => setQty(Math.min(stock, qty + 1))} aria-label="Plus"><Plus className="size-4" /></button>
@@ -102,16 +102,16 @@ function ProductView({ id }: { id: string }) {
               <button className="btn-gold h-12 w-full mt-3" onClick={() => { actions.addToCart({ kind: 'product', productId: p.id, qty }); nav('/boutique/commande') }}>Acheter maintenant</button>
             </>
           ) : (
-            <div className="mt-5 rounded-2xl border border-line bg-white p-4">
+            <div className="mt-5 rounded-2xl border border-line bg-surface p-4">
               {notify ? <div className="flex items-center gap-2 text-sm text-sage-700"><Check className="size-4" /> Nous vous préviendrons dès le retour en stock.</div> : (
                 <button className="btn-primary w-full" onClick={() => { if (!wished) actions.toggleWish(p.id); setNotify(true); toast('Alerte retour en stock activée') }}><Bell className="size-4" /> Me prévenir du retour en stock</button>
               )}
             </div>
           )}
           <div className="grid grid-cols-3 gap-2 mt-6 text-xs text-muted">
-            <div className="flex items-center gap-2 rounded-xl bg-white border border-line p-3"><Truck className="size-4 text-sage-500 shrink-0" />Livraison 24–72 h</div>
-            <div className="flex items-center gap-2 rounded-xl bg-white border border-line p-3"><ShieldCheck className="size-4 text-sage-500 shrink-0" />Authenticité garantie</div>
-            <div className="flex items-center gap-2 rounded-xl bg-white border border-line p-3"><Sparkles className="size-4 text-champagne-400 shrink-0" />+{Math.floor(pi.price * qty * t.settings.pointsPerDh)} points fidélité</div>
+            <div className="flex items-center gap-2 rounded-xl bg-surface border border-line p-3"><Truck className="size-4 text-sage-500 shrink-0" />Livraison 24–72 h</div>
+            <div className="flex items-center gap-2 rounded-xl bg-surface border border-line p-3"><ShieldCheck className="size-4 text-sage-500 shrink-0" />Authenticité garantie</div>
+            <div className="flex items-center gap-2 rounded-xl bg-surface border border-line p-3"><Sparkles className="size-4 text-champagne-400 shrink-0" />+{Math.floor(pi.price * qty * t.settings.pointsPerDh)} points fidélité</div>
           </div>
           <div className="mt-8 divide-y divide-line border-y border-line">
             {[['description', 'Description', p.description], ['composition', 'Composition', p.composition], ['usage', 'Mode d’utilisation', p.usage], ['warnings', 'Informations importantes', p.warnings]].map(([k, label, body]) => (

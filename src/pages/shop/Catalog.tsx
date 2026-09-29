@@ -45,7 +45,7 @@ export default function Catalog() {
   )
   const Opt = ({ on, onClick, children, n }: { on: boolean; onClick: () => void; children: React.ReactNode; n?: number }) => (
     <button onClick={onClick} className={cx('w-full flex items-center justify-between text-left text-sm py-1 cursor-pointer', on ? 'text-sage-700 font-medium' : 'text-muted hover:text-ink')}>
-      <span className="flex items-center gap-2"><span className={cx('size-3.5 rounded border grid place-items-center', on ? 'bg-sage-600 border-sage-600' : 'border-sand')}>{on && <span className="size-1.5 rounded-sm bg-white" />}</span>{children}</span>
+      <span className="flex items-center gap-2"><span className={cx('size-3.5 rounded border grid place-items-center', on ? 'bg-accent border-accent' : 'border-sand')}>{on && <span className="size-1.5 rounded-sm bg-surface" />}</span>{children}</span>
       {n !== undefined && <span className="text-[11px] text-soft">{n}</span>}
     </button>
   )
@@ -79,7 +79,7 @@ export default function Catalog() {
       </div>
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <button className="lg:hidden btn-secondary btn-sm" onClick={() => setMobileFilters(true)}><SlidersHorizontal className="size-3.5" /> Filtres</button>
-        {active.map(([k, v]) => <button key={k} onClick={() => set(k, '')} className="chip bg-white border border-line text-ink h-7 cursor-pointer hover:border-sage-300">{labels[k]?.(v) ?? v} <X className="size-3" /></button>)}
+        {active.map(([k, v]) => <button key={k} onClick={() => set(k, '')} className="chip bg-surface border border-line text-ink h-7 cursor-pointer hover:border-sage-300">{labels[k]?.(v) ?? v} <X className="size-3" /></button>)}
         {active.length > 0 && <button className="text-xs text-muted hover:text-ink underline cursor-pointer" onClick={() => setParams({})}>Tout effacer</button>}
         <span className="text-sm text-muted ml-auto">{list.length} produit{list.length > 1 ? 's' : ''}</span>
         <select className="input h-9 w-auto" value={sort} onChange={(e) => set('tri', e.target.value === 'pertinence' ? '' : e.target.value)}>
@@ -97,7 +97,7 @@ export default function Catalog() {
       {mobileFilters && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-ink/25" onClick={() => setMobileFilters(false)} />
-          <div className="absolute inset-y-0 right-0 w-80 max-w-[90vw] bg-white p-5 overflow-y-auto animate-fade-up">
+          <div className="absolute inset-y-0 right-0 w-80 max-w-[90vw] bg-surface p-5 overflow-y-auto animate-fade-up">
             <div className="flex justify-between items-center"><span className="font-display text-xl">Filtres</span><button className="btn-ghost h-8 w-8 p-0" onClick={() => setMobileFilters(false)} aria-label="Fermer"><X className="size-4" /></button></div>
             {filters}
             <button className="btn-primary w-full mt-4" onClick={() => setMobileFilters(false)}>Voir {list.length} produits</button>

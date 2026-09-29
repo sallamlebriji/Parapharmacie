@@ -43,7 +43,7 @@ export default function Routines() {
                       return (
                         <li key={id}>
                           <Link to={`/boutique/produit/${p.id}`} className="block rounded-2xl border border-line p-3 hover:border-sage-300 transition h-full">
-                            <div className="flex items-center gap-2 text-xs text-muted mb-2"><span className="size-5 rounded-full bg-sage-600 text-white grid place-items-center text-[10px]">{i + 1}</span>{pk.steps[i]}</div>
+                            <div className="flex items-center gap-2 text-xs text-muted mb-2"><span className="size-5 rounded-full bg-accent text-on-accent grid place-items-center text-[10px]">{i + 1}</span>{pk.steps[i]}</div>
                             <ProductVisual shape={p.shape} color={p.color} brand={p.brand} className="w-full aspect-square rounded-xl" />
                             <div className="text-xs mt-2 font-medium line-clamp-2">{p.name}</div>
                             <div className="text-xs text-muted">{money(p.price)}</div>
@@ -58,7 +58,7 @@ export default function Routines() {
                   <div className="text-lg text-soft line-through">{money(value)}</div>
                   <div className="text-sm text-muted mt-3">Prix du pack</div>
                   <div className="text-4xl font-semibold">{money(pk.price)}</div>
-                  <div className="chip bg-sage-600 text-white mt-3 h-7 px-3">Économie {money(value - pk.price)} ({pct(((value - pk.price) / value) * 100, 0)})</div>
+                  <div className="chip bg-accent text-on-accent mt-3 h-7 px-3">Économie {money(value - pk.price)} ({pct(((value - pk.price) / value) * 100, 0)})</div>
                   <button className="btn-primary w-full h-12 mt-6" onClick={() => { actions.addToCart({ kind: 'pack', packId: pk.id, qty: 1 }); toast(`${pk.name} ajouté au panier`) }}>Ajouter la routine <ArrowRight className="size-4" /></button>
                 </div>
               </div>

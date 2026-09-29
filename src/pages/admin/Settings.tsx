@@ -38,7 +38,7 @@ export default function Settings() {
               <Field label="Couleur principale">
                 <div className="flex gap-2 items-center">
                   <input type="color" className="size-10 rounded-lg border border-line cursor-pointer" value={t.primaryColor} onChange={(e) => actions.updateTenant({ primaryColor: e.target.value })} />
-                  {['#5f7d68', '#8a6f4d', '#6b7fa0', '#a0707a', '#3c5143'].map((c) => <button key={c} onClick={() => actions.updateTenant({ primaryColor: c })} className={cx('size-7 rounded-full border-2 cursor-pointer', t.primaryColor === c ? 'border-ink' : 'border-white')} style={{ background: c }} aria-label={c} />)}
+                  {['var(--color-sage-500)', '#8a6f4d', '#6b7fa0', '#a0707a', 'var(--color-sage-700)'].map((c) => <button key={c} onClick={() => actions.updateTenant({ primaryColor: c })} className={cx('size-7 rounded-full border-2 cursor-pointer', t.primaryColor === c ? 'border-ink' : 'border-surface')} style={{ background: c }} aria-label={c} />)}
                 </div>
               </Field>
               <Field label="Domaine de la boutique" hint="Domaine personnalisé disponible dès le plan Pro"><input className="input" defaultValue={`${t.slug}.paraflow.ma`} /></Field>

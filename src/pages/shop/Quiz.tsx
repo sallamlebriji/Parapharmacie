@@ -38,7 +38,7 @@ export default function Quiz() {
           <h2 className="text-2xl md:text-3xl mt-8 text-center">{q.title}</h2>
           <div className="grid sm:grid-cols-2 gap-3 mt-8">
             {q.options.map((o) => (
-              <button key={o.v} onClick={() => { setA({ ...a, [q.key]: o.v }); setStep(step + 1) }} className={cx('rounded-2xl border p-5 text-left cursor-pointer transition hover:border-sage-400 hover:bg-sage-50 hover:-translate-y-0.5', a[q.key] === o.v ? 'border-sage-500 bg-sage-50' : 'border-line bg-white')}>
+              <button key={o.v} onClick={() => { setA({ ...a, [q.key]: o.v }); setStep(step + 1) }} className={cx('rounded-2xl border p-5 text-left cursor-pointer transition hover:border-sage-400 hover:bg-sage-50 hover:-translate-y-0.5', a[q.key] === o.v ? 'border-sage-500 bg-sage-50' : 'border-line bg-surface')}>
                 <div className="font-medium">{o.label}</div>
                 {o.hint && <div className="text-xs text-muted mt-0.5">{o.hint}</div>}
               </button>
@@ -55,7 +55,7 @@ export default function Quiz() {
                 const pi = priceOf(d, r.product)
                 return (
                   <li key={r.step + r.product.id} className="flex items-center gap-4 rounded-2xl border border-line p-3">
-                    <span className="size-7 rounded-full bg-sage-600 text-white grid place-items-center text-xs shrink-0">{i + 1}</span>
+                    <span className="size-7 rounded-full bg-accent text-on-accent grid place-items-center text-xs shrink-0">{i + 1}</span>
                     <ProductVisual shape={r.product.shape} color={r.product.color} brand={r.product.brand} className="size-16 rounded-xl shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-[11px] uppercase tracking-wider text-champagne-600">{r.step}</div>

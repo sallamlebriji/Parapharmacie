@@ -28,7 +28,7 @@ export default function Console() {
   const mrr = paying.reduce((a, t) => a + plan(t.plan).price, 0)
   return (
     <div className="min-h-screen bg-ivory">
-      <header className="h-16 border-b border-line bg-white"><div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between"><Link to="/"><Logo sub="Console opérateur" /></Link><button className="btn-ghost btn-sm" onClick={() => actions.logoutOperator()}><LogOut className="size-3.5" /> Déconnexion</button></div></header>
+      <header className="h-16 border-b border-line bg-surface"><div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between"><Link to="/"><Logo sub="Console opérateur" /></Link><button className="btn-ghost btn-sm" onClick={() => actions.logoutOperator()}><LogOut className="size-3.5" /> Déconnexion</button></div></header>
       <main className="max-w-6xl mx-auto px-4 py-8">
         <PageHeader title="Tenants & abonnements" subtitle="Vue fournisseur SaaS : facturation et consommation uniquement — les données métier des parapharmacies ne sont pas accessibles ici." />
         {error && <p className="text-sm text-rose-ink mb-4">{error}</p>}

@@ -83,14 +83,14 @@ function ProductEdit() {
               <Field label="Besoins (recherche & recommandations)" className="sm:col-span-2">
                 <div className="flex flex-wrap gap-1.5">
                   {Object.entries(NEEDS).map(([k, v]) => (
-                    <button type="button" key={k} onClick={() => set('needs', p.needs.includes(k) ? p.needs.filter((n) => n !== k) : [...p.needs, k])} className={cx('chip border cursor-pointer', p.needs.includes(k) ? 'bg-sage-600 text-white border-sage-600' : 'bg-white border-line text-muted hover:border-sage-300')}>{v}</button>
+                    <button type="button" key={k} onClick={() => set('needs', p.needs.includes(k) ? p.needs.filter((n) => n !== k) : [...p.needs, k])} className={cx('chip border cursor-pointer', p.needs.includes(k) ? 'bg-accent text-on-accent border-sage-600' : 'bg-surface border-line text-muted hover:border-sage-300')}>{v}</button>
                   ))}
                 </div>
               </Field>
               <Field label="Types de peau" className="sm:col-span-2">
                 <div className="flex flex-wrap gap-1.5">
                   {Object.entries(SKIN_TYPES).map(([k, v]) => (
-                    <button type="button" key={k} onClick={() => set('skinTypes', p.skinTypes.includes(k) ? p.skinTypes.filter((n) => n !== k) : [...p.skinTypes, k])} className={cx('chip border cursor-pointer', p.skinTypes.includes(k) ? 'bg-sage-600 text-white border-sage-600' : 'bg-white border-line text-muted hover:border-sage-300')}>{v}</button>
+                    <button type="button" key={k} onClick={() => set('skinTypes', p.skinTypes.includes(k) ? p.skinTypes.filter((n) => n !== k) : [...p.skinTypes, k])} className={cx('chip border cursor-pointer', p.skinTypes.includes(k) ? 'bg-accent text-on-accent border-sage-600' : 'bg-surface border-line text-muted hover:border-sage-300')}>{v}</button>
                   ))}
                 </div>
               </Field>

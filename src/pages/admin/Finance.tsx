@@ -58,7 +58,7 @@ export default function Finance() {
       </div>
       <div className="grid lg:grid-cols-3 gap-4 mb-4">
         <Card title="Résultat mensuel" className="lg:col-span-2">
-          <Bars data={m.monthly} x="label" unit="DH" series={[{ key: 'ca', label: 'CA' }, { key: 'cout', label: 'Coût marchandises', color: '#d4b98c' }, { key: 'depenses', label: 'Dépenses', color: '#c98a7f' }, { key: 'benefice', label: 'Bénéfice', color: '#3c5143' }]} height={300} />
+          <Bars data={m.monthly} x="label" unit="DH" series={[{ key: 'ca', label: 'CA' }, { key: 'cout', label: 'Coût marchandises', color: '#d4b98c' }, { key: 'depenses', label: 'Dépenses', color: '#c98a7f' }, { key: 'benefice', label: 'Bénéfice', color: 'var(--color-sage-700)' }]} height={300} />
         </Card>
         <Card title="Paiements">
           <ul className="space-y-3 text-sm">

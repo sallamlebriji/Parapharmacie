@@ -75,19 +75,19 @@ export function ChatWidget() {
 
   return (
     <>
-      <button onClick={() => setOpen(!open)} className="fixed bottom-5 right-5 z-40 size-14 rounded-full bg-sage-600 text-white shadow-lift grid place-items-center hover:bg-sage-700 transition cursor-pointer" aria-label="Assistance">
+      <button onClick={() => setOpen(!open)} className="fixed bottom-5 right-5 z-40 size-14 rounded-full bg-accent text-on-accent shadow-lift grid place-items-center hover:bg-accent-hover transition cursor-pointer" aria-label="Assistance">
         {open ? <X className="size-5" /> : <MessageCircle className="size-6" />}
       </button>
       {open && (
         <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:w-96 z-40 card shadow-lift flex flex-col h-[520px] max-h-[70vh] animate-fade-up overflow-hidden">
-          <header className="px-4 py-3 bg-sage-600 text-white flex items-center gap-3">
+          <header className="px-4 py-3 bg-accent text-on-accent flex items-center gap-3">
             <span className="size-9 rounded-full bg-white/15 grid place-items-center"><Bot className="size-5" /></span>
             <div><div className="text-sm font-medium">Assistance & conseils</div><div className="text-[11px] text-sage-100">Réponse immédiate · conseillers 9h–20h</div></div>
           </header>
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-ivory scrollbar-thin">
             {msgs.map((m, i) => (
               <div key={i} className={cx('flex', m.from === 'user' ? 'justify-end' : 'justify-start')}>
-                <div className={cx('max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed', m.from === 'user' ? 'bg-sage-600 text-white' : m.from === 'staff' ? 'bg-champagne-100' : 'bg-white border border-line')}>
+                <div className={cx('max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed', m.from === 'user' ? 'bg-accent text-on-accent' : m.from === 'staff' ? 'bg-champagne-100' : 'bg-surface border border-line')}>
                   {m.from === 'staff' && <div className="text-[10px] uppercase tracking-wider text-champagne-600 mb-0.5">Conseiller</div>}
                   {m.text}
                   {m.links && <div className="mt-2 flex flex-col gap-1">{m.links.map((l) => l.to === '#human'

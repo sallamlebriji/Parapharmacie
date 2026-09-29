@@ -29,7 +29,7 @@ export function SmartSearch({ big, onDone }: { big?: boolean; onDone?: () => voi
     <div className="relative w-full">
       <form onSubmit={(e) => { e.preventDefault(); go(`/boutique/catalogue?q=${encodeURIComponent(q)}`) }}>
         <Search className={cx('absolute left-4 top-1/2 -translate-y-1/2 text-soft', big ? 'size-5' : 'size-4')} />
-        <input value={q} onChange={(e) => setQ(e.target.value)} onFocus={() => setFocus(true)} onBlur={() => setTimeout(() => setFocus(false), 150)} placeholder="Produit, marque, besoin (ex. « peau sèche », « chute »), référence…" className={cx('input rounded-full bg-white', big ? 'h-14 pl-12 text-base' : 'h-10 pl-10')} />
+        <input value={q} onChange={(e) => setQ(e.target.value)} onFocus={() => setFocus(true)} onBlur={() => setTimeout(() => setFocus(false), 150)} placeholder="Produit, marque, besoin (ex. « peau sèche », « chute »), référence…" className={cx('input rounded-full bg-surface', big ? 'h-14 pl-12 text-base' : 'h-10 pl-10')} />
       </form>
       {focus && res && (
         <div className="absolute z-50 mt-2 w-full card shadow-lift p-2 animate-fade-up">
@@ -125,7 +125,7 @@ function ShopShell() {
       {menu && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-ink/25" onClick={() => setMenu(false)} />
-          <aside className="absolute inset-y-0 left-0 w-80 max-w-[85vw] bg-white p-5 overflow-y-auto animate-fade-up">
+          <aside className="absolute inset-y-0 left-0 w-80 max-w-[85vw] bg-surface p-5 overflow-y-auto animate-fade-up">
             <div className="flex justify-between items-center mb-4"><span className="font-display text-xl">{t.name}</span><button className="btn-ghost h-8 w-8 p-0" onClick={() => setMenu(false)} aria-label="Fermer"><X className="size-4" /></button></div>
             <div className="space-y-1">
               {[['/boutique/routines', 'Routines & packs'], ['/boutique/quiz', 'Quiz beauté'], ['/boutique/conseils', 'Conseils'], ['/admin', 'Espace pro (démo)']].map(([to, l]) => <Link key={to} to={to} className="block py-2 font-medium">{l}</Link>)}

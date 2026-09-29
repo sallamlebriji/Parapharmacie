@@ -90,7 +90,7 @@ export default function Employees() {
           <p className="text-sm text-muted">Transmettez ces identifiants à l’employé. Le mot de passe temporaire n’est affiché qu’une seule fois.</p>
           <div className="mt-4 rounded-xl bg-ivory border border-line p-4 text-sm space-y-1">
             <div>Email : <b>{invite.email}</b></div>
-            <div>Mot de passe temporaire : <code className="font-mono bg-white border border-line rounded px-1.5 py-0.5">{invite.pwd}</code></div>
+            <div>Mot de passe temporaire : <code className="font-mono bg-surface border border-line rounded px-1.5 py-0.5">{invite.pwd}</code></div>
           </div>
         </Modal>
       )}

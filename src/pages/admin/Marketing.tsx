@@ -120,7 +120,7 @@ function CampaignModal({ campaign, onClose }: { campaign: Campaign; onClose: () 
         <div>
           <div className="label">Aperçu</div>
           <div className="rounded-2xl border border-line bg-cream p-4">
-            <div className="bg-white rounded-xl shadow-soft overflow-hidden">
+            <div className="bg-surface rounded-xl shadow-soft overflow-hidden">
               <div className="px-5 py-4 text-center border-b border-line" style={{ background: t.primaryColor, color: '#fff' }}><div className="font-display text-lg">{t.name}</div></div>
               <div className="p-5">
                 <div className="font-medium">{c.subject || 'Objet de votre message'}</div>

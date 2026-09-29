@@ -53,7 +53,7 @@ export default function Checkout() {
         {STEPS.map((s, i) => (
           <li key={s} className="flex-1 flex items-center">
             <div className="flex flex-col items-center gap-1.5 flex-1">
-              <span className={cx('size-8 rounded-full grid place-items-center text-xs font-semibold border-2 transition', i < step ? 'bg-sage-600 border-sage-600 text-white' : i === step ? 'border-sage-600 text-sage-700 bg-white ring-4 ring-sage-100' : 'border-line text-soft bg-white')}>{i < step ? <Check className="size-4" /> : i + 1}</span>
+              <span className={cx('size-8 rounded-full grid place-items-center text-xs font-semibold border-2 transition', i < step ? 'bg-accent border-accent text-on-accent' : i === step ? 'border-sage-600 text-sage-700 bg-surface ring-4 ring-sage-100' : 'border-line text-soft bg-surface')}>{i < step ? <Check className="size-4" /> : i + 1}</span>
               <span className={cx('text-[11px] sm:text-xs', i <= step ? 'text-ink font-medium' : 'text-soft')}>{s}</span>
             </div>
             {i < STEPS.length - 1 && <span className={cx('h-0.5 flex-1 -mt-5', i < step ? 'bg-sage-500' : 'bg-line')} />}

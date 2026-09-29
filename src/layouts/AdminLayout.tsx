@@ -136,7 +136,7 @@ function AdminShell() {
             <div key={g.group}>
               <div className="px-2.5 mb-1 text-[10px] uppercase tracking-[0.14em] text-soft font-medium">{g.group}</div>
               {items.map((i) => (
-                <NavLink key={i.to} to={i.to} end={i.to === '/admin'} className={({ isActive }) => cx('flex items-center gap-2.5 px-2.5 h-9 rounded-lg text-[13px] transition', isActive ? 'bg-sage-600 text-white shadow-soft' : 'text-muted hover:text-ink hover:bg-cream')}>
+                <NavLink key={i.to} to={i.to} end={i.to === '/admin'} className={({ isActive }) => cx('flex items-center gap-2.5 px-2.5 h-9 rounded-lg text-[13px] transition', isActive ? 'bg-accent text-on-accent shadow-soft' : 'text-muted hover:text-ink hover:bg-cream')}>
                   <i.icon className="size-4" strokeWidth={1.75} /> {i.label}
                 </NavLink>
               ))}
@@ -154,11 +154,11 @@ function AdminShell() {
 
   return (
     <div className="min-h-screen bg-ivory">
-      <aside className="hidden lg:block fixed inset-y-0 left-0 w-64 bg-white border-r border-line z-30">{sidebar}</aside>
+      <aside className="hidden lg:block fixed inset-y-0 left-0 w-64 bg-surface border-r border-line z-30">{sidebar}</aside>
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-ink/25" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 bg-white shadow-lift animate-fade-up">{sidebar}</aside>
+          <aside className="absolute inset-y-0 left-0 w-72 bg-surface shadow-lift animate-fade-up">{sidebar}</aside>
         </div>
       )}
       <div className="lg:pl-64">
@@ -166,7 +166,7 @@ function AdminShell() {
           <button className="lg:hidden btn-ghost h-9 w-9 p-0" onClick={() => setMobileOpen(true)} aria-label="Menu"><Menu className="size-5" /></button>
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-soft" />
-            <input className="input pl-9 bg-white" placeholder="Rechercher produit, client, commande…" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === 'Escape' && setQ('')} />
+            <input className="input pl-9 bg-surface" placeholder="Rechercher produit, client, commande…" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === 'Escape' && setQ('')} />
             {results.length > 0 && (
               <div className="absolute mt-2 w-full card shadow-lift p-1.5 z-40">
                 {results.map((r) => (

@@ -108,7 +108,7 @@ export default function Dashboard() {
 
       <div className="grid xl:grid-cols-3 gap-4 mb-4">
         <Card className="xl:col-span-2" title="Chiffre d’affaires & marge" action={<Tabs tabs={[{ id: 'jour' as const, label: 'Jour' }, { id: 'semaine' as const, label: 'Semaine' }, { id: 'mois' as const, label: 'Mois' }]} value={gran} onChange={setGran} />}>
-          <TrendChart data={revenue} x="label" unit="DH" series={[{ key: 'ca', label: 'Chiffre d’affaires' }, { key: 'marge', label: 'Marge brute', color: '#c9a96e' }]} height={280} />
+          <TrendChart data={revenue} x="label" unit="DH" series={[{ key: 'ca', label: 'Chiffre d’affaires' }, { key: 'marge', label: 'Marge brute', color: 'var(--color-champagne-400)' }]} height={280} />
         </Card>
         <Card title={<span className="flex items-center gap-2">Alertes importantes <Badge tone="rose">{alerts.length}</Badge></span>}>
           <ul className="space-y-2">
@@ -152,19 +152,19 @@ export default function Dashboard() {
           <div className="mt-4"><Legendary items={m.catTop.map((c) => ({ name: c.name, value: money(c.value) }))} /></div>
         </Card>
         <Card title="Évolution des commandes" className="lg:col-span-2 xl:col-span-1">
-          <Bars data={channel} x="label" stacked series={[{ key: 'pos', label: 'Boutiques (POS)' }, { key: 'web', label: 'E-commerce', color: '#c9a96e' }]} height={300} />
+          <Bars data={channel} x="label" stacked series={[{ key: 'pos', label: 'Boutiques (POS)' }, { key: 'web', label: 'E-commerce', color: 'var(--color-champagne-400)' }]} height={300} />
         </Card>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">
         <Card title="Évolution du stock (unités)">
-          <TrendChart data={stockTrend} x="label" series={[{ key: 'stock', label: 'Unités en stock', color: '#7fa3c2' }]} height={220} />
+          <TrendChart data={stockTrend} x="label" series={[{ key: 'stock', label: 'Unités en stock', color: 'var(--color-teal-500)' }]} height={220} />
         </Card>
         <Card title="Taux de marge commerciale">
-          <TrendChart data={channel} x="label" unit="%" kind="line" series={[{ key: 'tauxMarge', label: 'Taux de marge', color: '#c9a96e' }]} height={220} />
+          <TrendChart data={channel} x="label" unit="%" kind="line" series={[{ key: 'tauxMarge', label: 'Taux de marge', color: 'var(--color-champagne-400)' }]} height={220} />
         </Card>
         <Card title="Clients nouveaux vs existants">
-          <Bars data={custMix} x="label" stacked series={[{ key: 'existants', label: 'Existants' }, { key: 'nouveaux', label: 'Nouveaux', color: '#7fa3c2' }]} height={220} />
+          <Bars data={custMix} x="label" stacked series={[{ key: 'existants', label: 'Existants' }, { key: 'nouveaux', label: 'Nouveaux', color: 'var(--color-teal-500)' }]} height={220} />
         </Card>
       </div>
     </div>

@@ -96,9 +96,9 @@ export default function Analytics() {
             <Stat label="Taux de conversion web" value={pct(conv, 2)} delta={variation(conv, convPrev)} />
           </div>
           <div className="grid lg:grid-cols-3 gap-4">
-            <Card title="CA hebdomadaire & marge" className="lg:col-span-3"><TrendChart data={weekly} x="label" unit="DH" series={[{ key: 'ca', label: 'CA' }, { key: 'marge', label: 'Marge', color: '#c9a96e' }]} /></Card>
+            <Card title="CA hebdomadaire & marge" className="lg:col-span-3"><TrendChart data={weekly} x="label" unit="DH" series={[{ key: 'ca', label: 'CA' }, { key: 'marge', label: 'Marge', color: 'var(--color-champagne-400)' }]} /></Card>
             <Card title="CA par jour de la semaine" className="lg:col-span-2"><Bars data={weekday} x="label" unit="DH" series={[{ key: 'ca', label: 'CA' }]} height={220} /></Card>
-            <Card title="Affluence par heure"><Bars data={hours} x="label" series={[{ key: 'commandes', label: 'Ventes', color: '#7fa3c2' }]} height={220} /></Card>
+            <Card title="Affluence par heure"><Bars data={hours} x="label" series={[{ key: 'commandes', label: 'Ventes', color: 'var(--color-teal-500)' }]} height={220} /></Card>
           </div>
         </>
       )}
@@ -121,7 +121,7 @@ export default function Analytics() {
               ))}</tbody>
             </table>
           </Card>
-          <Card title="Marge par produit (top 12)" className="lg:col-span-2"><Bars horizontal data={[...a.prods].sort((x, y) => y.margin - x.margin).slice(0, 12).map((x) => ({ label: x.p.name.length > 24 ? x.p.name.slice(0, 23) + '…' : x.p.name, marge: Math.round(x.margin) }))} x="label" unit="DH" series={[{ key: 'marge', label: 'Marge brute', color: '#c9a96e' }]} height={380} /></Card>
+          <Card title="Marge par produit (top 12)" className="lg:col-span-2"><Bars horizontal data={[...a.prods].sort((x, y) => y.margin - x.margin).slice(0, 12).map((x) => ({ label: x.p.name.length > 24 ? x.p.name.slice(0, 23) + '…' : x.p.name, marge: Math.round(x.margin) }))} x="label" unit="DH" series={[{ key: 'marge', label: 'Marge brute', color: 'var(--color-champagne-400)' }]} height={380} /></Card>
           <Card title="Rotation du stock (90 j)" className="lg:col-span-2" padded={false}>
             <div className="overflow-x-auto"><table className="table-base">
               <thead><tr><th>Produit</th><th className="text-right">Vendus</th><th className="text-right">Stock actuel</th><th className="text-right">Rotation</th><th className="text-right">Jours de couverture</th></tr></thead>
@@ -141,7 +141,7 @@ export default function Analytics() {
             <Stat label="Lifetime Value moyenne" value={money(a.ltv)} tone="sky" />
             <Stat label="Taux de fidélisation" value={pct((a.retained / Math.max(1, a.prevSet.size)) * 100, 0)} hint="clients du trimestre préc. revenus" />
           </div>
-          <Card title="Commandes : nouveaux vs récurrents (par semaine)"><Bars data={custSeries} x="label" stacked series={[{ key: 'recurrents', label: 'Récurrents' }, { key: 'nouveaux', label: 'Nouveaux', color: '#7fa3c2' }]} height={280} /></Card>
+          <Card title="Commandes : nouveaux vs récurrents (par semaine)"><Bars data={custSeries} x="label" stacked series={[{ key: 'recurrents', label: 'Récurrents' }, { key: 'nouveaux', label: 'Nouveaux', color: 'var(--color-teal-500)' }]} height={280} /></Card>
         </>
       )}
 
@@ -154,8 +154,8 @@ export default function Analytics() {
             <Stat label="Conversion" value={pct(conv, 2)} delta={variation(conv, convPrev)} tone="sky" />
           </div>
           <div className="grid lg:grid-cols-2 gap-4">
-            <Card title="Visites & ajouts au panier"><TrendChart data={funnel} x="label" series={[{ key: 'visites', label: 'Visites' }, { key: 'paniers', label: 'Ajouts panier', color: '#c9a96e' }]} /></Card>
-            <Card title="Conversion & abandon (%)"><TrendChart kind="line" data={funnel} x="label" unit="%" series={[{ key: 'conversion', label: 'Conversion', color: '#5f7d68' }, { key: 'abandon', label: 'Abandon panier', color: '#c98a7f' }]} /></Card>
+            <Card title="Visites & ajouts au panier"><TrendChart data={funnel} x="label" series={[{ key: 'visites', label: 'Visites' }, { key: 'paniers', label: 'Ajouts panier', color: 'var(--color-champagne-400)' }]} /></Card>
+            <Card title="Conversion & abandon (%)"><TrendChart kind="line" data={funnel} x="label" unit="%" series={[{ key: 'conversion', label: 'Conversion', color: 'var(--color-sage-500)' }, { key: 'abandon', label: 'Abandon panier', color: '#c98a7f' }]} /></Card>
           </div>
         </>
       )}

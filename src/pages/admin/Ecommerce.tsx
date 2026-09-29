@@ -55,7 +55,7 @@ export default function Ecommerce() {
               const value = packValue(d, p)
               return (
                 <button key={p.id} onClick={() => setPack(p)} className="card p-5 text-left cursor-pointer hover:shadow-lift transition">
-                  <div className="flex -space-x-3 mb-4">{p.productIds.map((id) => { const x = d.products.find((y) => y.id === id)!; return <ProductVisual key={id} shape={x.shape} color={x.color} brand={x.brand} className="size-14 rounded-xl border-2 border-white" /> })}</div>
+                  <div className="flex -space-x-3 mb-4">{p.productIds.map((id) => { const x = d.products.find((y) => y.id === id)!; return <ProductVisual key={id} shape={x.shape} color={x.color} brand={x.brand} className="size-14 rounded-xl border-2 border-surface" /> })}</div>
                   <div className="font-medium">{p.name}</div>
                   <div className="text-xs text-muted">{p.tagline}</div>
                   <div className="flex items-end justify-between mt-4 pt-3 border-t border-line">

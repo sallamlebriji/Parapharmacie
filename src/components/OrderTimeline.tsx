@@ -22,7 +22,7 @@ export function OrderTimeline({ order }: { order: Order }) {
         return (
           <li key={step.s} className="relative flex flex-col items-center text-center">
             {i > 0 && <span className={cx('absolute top-4 right-1/2 w-full h-0.5 -z-0', i <= cur ? 'bg-sage-400' : 'bg-line')} />}
-            <span className={cx('relative z-10 size-8 rounded-full grid place-items-center border-2 transition', done ? 'bg-sage-500 border-sage-500 text-white' : 'bg-white border-line text-soft', i === cur && 'ring-4 ring-sage-100')}>
+            <span className={cx('relative z-10 size-8 rounded-full grid place-items-center border-2 transition', done ? 'bg-accent border-accent text-on-accent' : 'bg-surface border-line text-soft', i === cur && 'ring-4 ring-sage-100')}>
               {done && i < cur ? <Check className="size-4" /> : <step.icon className="size-3.5" />}
             </span>
             <span className={cx('mt-2 text-[11px] sm:text-xs font-medium leading-tight', done ? 'text-ink' : 'text-soft')}>{step.label}</span>
