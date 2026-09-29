@@ -1,0 +1,396 @@
+// Paraflow — schéma MySQL / MariaDB.
+// Multi-tenant « base partagée » : chaque table métier porte `tenantId`. MySQL n'ayant pas de
+// Row-Level Security, l'isolation est appliquée par l'extension Prisma de `src/db.ts`, qui ajoute
+// le filtre `tenantId` à TOUTES les requêtes des routes authentifiées.
+// Les listes courtes et les sous-documents (besoins, historique de statut…) sont en colonnes JSON.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id           String   @id @db.VarChar(64)
+  slug         String   @unique @db.VarChar(80)
+  name         String   @db.VarChar(160)
+  tagline      String   @default("") @db.VarChar(255)
+  primaryColor String   @default("#5f7d68") @db.VarChar(16)
+  plan         String   @db.VarChar(20)
+  status       String   @db.VarChar(20)
+  trialEndsAt  DateTime
+  createdAt    DateTime @default(now())
+  settings     Json
+  permissions  Json
+}
+
+/// Employés (et opérateur de la plateforme quand tenantId est null).
+model User {
+  id           String    @id @db.VarChar(64)
+  tenantId     String?   @db.VarChar(64)
+  email        String    @unique @db.VarChar(190)
+  name         String    @db.VarChar(160)
+  role         String    @db.VarChar(20)
+  storeId      String?   @db.VarChar(64)
+  active       Boolean   @default(true)
+  passwordHash String    @db.VarChar(100)
+  isOperator   Boolean   @default(false)
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([tenantId])
+}
+
+model Store {
+  id       String @id @db.VarChar(64)
+  tenantId String @db.VarChar(64)
+  name     String @db.VarChar(160)
+  city     String @db.VarChar(80)
+  address  String @db.VarChar(255)
+  phone    String @default("") @db.VarChar(40)
+  manager  String @default("") @db.VarChar(160)
+  openedAt String @db.VarChar(10)
+
+  @@index([tenantId])
+}
+
+model Product {
+  id             String   @id @db.VarChar(64)
+  tenantId       String   @db.VarChar(64)
+  name           String   @db.VarChar(200)
+  brand          String   @db.VarChar(80)
+  ref            String   @db.VarChar(40)
+  barcode        String   @db.VarChar(40)
+  category       String   @db.VarChar(30)
+  subcategory    String   @db.VarChar(60)
+  needs          Json
+  skinTypes      Json
+  description    String   @db.Text
+  composition    String   @db.Text
+  usage          String   @db.Text
+  warnings       String   @db.Text
+  purchasePrice  Decimal  @db.Decimal(10, 2)
+  price          Decimal  @db.Decimal(10, 2)
+  promoPrice     Decimal? @db.Decimal(10, 2)
+  alertThreshold Int
+  supplierId     String   @db.VarChar(64)
+  shape          String   @db.VarChar(20)
+  color          String   @db.VarChar(16)
+  volume         String   @db.VarChar(40)
+  rating         Float    @default(0)
+  reviewsCount   Int      @default(0)
+  isNew          Boolean  @default(false)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([tenantId, ref])
+  @@index([tenantId, barcode])
+  @@index([tenantId, category])
+}
+
+model Lot {
+  id         String   @id @db.VarChar(64)
+  tenantId   String   @db.VarChar(64)
+  productId  String   @db.VarChar(64)
+  storeId    String   @db.VarChar(64)
+  number     String   @db.VarChar(40)
+  qty        Int
+  initialQty Int
+  receivedAt DateTime
+  expiresAt  DateTime
+  supplierId String   @db.VarChar(64)
+  updatedAt  DateTime @updatedAt
+
+  @@index([tenantId, productId, storeId])
+  @@index([tenantId, expiresAt])
+}
+
+model Movement {
+  id        String   @id @db.VarChar(64)
+  tenantId  String   @db.VarChar(64)
+  date      DateTime
+  type      String   @db.VarChar(20)
+  productId String   @db.VarChar(64)
+  lotId     String?  @db.VarChar(64)
+  storeId   String   @db.VarChar(64)
+  toStoreId String?  @db.VarChar(64)
+  qty       Int
+  note      String   @db.VarChar(255)
+  user      String   @db.VarChar(160)
+
+  @@index([tenantId, date])
+  @@index([tenantId, productId])
+}
+
+model Order {
+  id            String      @id @db.VarChar(64)
+  tenantId      String      @db.VarChar(64)
+  number        String      @db.VarChar(30)
+  channel       String      @db.VarChar(10)
+  storeId       String      @db.VarChar(64)
+  customerId    String?     @db.VarChar(64)
+  subtotal      Decimal     @db.Decimal(10, 2)
+  discount      Decimal     @db.Decimal(10, 2)
+  shipping      Decimal     @db.Decimal(10, 2)
+  total         Decimal     @db.Decimal(10, 2)
+  couponCode    String?     @db.VarChar(40)
+  pointsUsed    Int?
+  status        String      @db.VarChar(20)
+  paymentMethod String      @db.VarChar(20)
+  paymentStatus String      @db.VarChar(20)
+  delivery      Json?
+  history       Json
+  cashier       String?     @db.VarChar(160)
+  guestKey      String?     @db.VarChar(64)
+  /// Pour un ticket de retour (RET-…) : la vente d'origine.
+  returnOf      String?     @db.VarChar(64)
+  createdAt     DateTime
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, customerId])
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   String  @db.VarChar(64)
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String  @db.VarChar(64)
+  qty       Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  unitCost  Decimal @db.Decimal(10, 2)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Customer {
+  id             String   @id @db.VarChar(64)
+  tenantId       String   @db.VarChar(64)
+  firstName      String   @db.VarChar(80)
+  lastName       String   @db.VarChar(80)
+  phone          String   @db.VarChar(40)
+  email          String   @db.VarChar(190)
+  address        String   @db.VarChar(255)
+  city           String   @db.VarChar(80)
+  createdAt      DateTime
+  points         Int      @default(0)
+  couponsUsed    Json
+  favorites      Json
+  skinType       String?  @db.VarChar(20)
+  marketingOptIn Boolean  @default(false)
+  passwordHash   String?  @db.VarChar(100)
+  updatedAt      DateTime @updatedAt
+
+  @@index([tenantId, email])
+  @@index([tenantId, phone])
+}
+
+model Supplier {
+  id           String @id @db.VarChar(64)
+  tenantId     String @db.VarChar(64)
+  name         String @db.VarChar(160)
+  contact      String @db.VarChar(160)
+  email        String @db.VarChar(190)
+  phone        String @db.VarChar(40)
+  city         String @db.VarChar(80)
+  paymentTerms String @db.VarChar(40)
+  brands       Json
+
+  @@index([tenantId])
+}
+
+model PurchaseOrder {
+  id         String   @id @db.VarChar(64)
+  tenantId   String   @db.VarChar(64)
+  number     String   @db.VarChar(30)
+  supplierId String   @db.VarChar(64)
+  storeId    String   @db.VarChar(64)
+  status     String   @db.VarChar(20)
+  lines      Json
+  invoice    Json?
+  createdAt  DateTime
+  expectedAt DateTime
+
+  @@unique([tenantId, number])
+}
+
+model Promotion {
+  id        String   @id @db.VarChar(64)
+  tenantId  String   @db.VarChar(64)
+  name      String   @db.VarChar(160)
+  code      String?  @db.VarChar(40)
+  type      String   @db.VarChar(20)
+  value     Decimal  @db.Decimal(10, 2)
+  target    String?  @db.VarChar(64)
+  buyX      Int?
+  getY      Int?
+  minAmount Decimal? @db.Decimal(10, 2)
+  startsAt  DateTime
+  endsAt    DateTime
+  active    Boolean
+  uses      Int      @default(0)
+  highlight Boolean  @default(false)
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+model Pack {
+  id          String  @id @db.VarChar(64)
+  tenantId    String  @db.VarChar(64)
+  slug        String  @db.VarChar(120)
+  name        String  @db.VarChar(160)
+  kind        String  @db.VarChar(20)
+  tagline     String  @db.VarChar(255)
+  description String  @db.Text
+  productIds  Json
+  price       Decimal @db.Decimal(10, 2)
+  steps       Json
+
+  @@index([tenantId])
+}
+
+model Article {
+  id         String   @id @db.VarChar(64)
+  tenantId   String   @db.VarChar(64)
+  slug       String   @db.VarChar(160)
+  title      String   @db.VarChar(255)
+  category   String   @db.VarChar(60)
+  excerpt    String   @db.VarChar(500)
+  body       Json
+  readTime   Int
+  date       DateTime
+  cover      String   @db.VarChar(16)
+  productIds Json
+
+  @@unique([tenantId, slug])
+}
+
+model Review {
+  id        String   @id @db.VarChar(64)
+  tenantId  String   @db.VarChar(64)
+  productId String   @db.VarChar(64)
+  author    String   @db.VarChar(120)
+  rating    Int
+  title     String   @db.VarChar(160)
+  text      String   @db.Text
+  date      DateTime
+  verified  Boolean
+  hasPhoto  Boolean  @default(false)
+  status    String   @db.VarChar(20)
+
+  @@index([tenantId, productId])
+}
+
+model DeliveryZone {
+  id            String  @id @db.VarChar(64)
+  tenantId      String  @db.VarChar(64)
+  name          String  @db.VarChar(120)
+  cities        Json
+  standardFee   Decimal @db.Decimal(10, 2)
+  expressFee    Decimal @db.Decimal(10, 2)
+  freeAbove     Decimal @db.Decimal(10, 2)
+  standardDelay String  @db.VarChar(40)
+  expressDelay  String  @db.VarChar(40)
+  active        Boolean
+
+  @@index([tenantId])
+}
+
+model Campaign {
+  id       String   @id @db.VarChar(64)
+  tenantId String   @db.VarChar(64)
+  name     String   @db.VarChar(160)
+  channel  String   @db.VarChar(10)
+  segment  String   @db.VarChar(120)
+  status   String   @db.VarChar(20)
+  sent     Int      @default(0)
+  opened   Int      @default(0)
+  clicked  Int      @default(0)
+  revenue  Decimal  @default(0) @db.Decimal(12, 2)
+  date     DateTime
+  subject  String   @db.VarChar(255)
+
+  @@index([tenantId])
+}
+
+model Expense {
+  id       String   @id @db.VarChar(64)
+  tenantId String   @db.VarChar(64)
+  date     DateTime
+  label    String   @db.VarChar(160)
+  category String   @db.VarChar(40)
+  amount   Decimal  @db.Decimal(12, 2)
+  storeId  String   @db.VarChar(64)
+
+  @@index([tenantId, date])
+}
+
+model Notification {
+  id       String   @id @db.VarChar(64)
+  tenantId String   @db.VarChar(64)
+  type     String   @db.VarChar(20)
+  title    String   @db.VarChar(160)
+  body     String   @db.VarChar(500)
+  date     DateTime
+  read     Boolean  @default(false)
+  link     String?  @db.VarChar(255)
+
+  @@index([tenantId, date])
+}
+
+model ChatThread {
+  id         String   @id @db.VarChar(64)
+  tenantId   String   @db.VarChar(64)
+  customerId String?  @db.VarChar(64)
+  customer   String   @db.VarChar(160)
+  subject    String   @db.VarChar(255)
+  topic      String   @db.VarChar(20)
+  status     String   @db.VarChar(20)
+  messages   Json
+  guestKey   String?  @db.VarChar(64)
+  updatedAt  DateTime @updatedAt
+
+  @@index([tenantId, updatedAt])
+}
+
+model Wishlist {
+  id         String @id @db.VarChar(64)
+  tenantId   String @db.VarChar(64)
+  customerId String @db.VarChar(64)
+  name       String @db.VarChar(120)
+  productIds Json
+  alerts     Json
+
+  @@index([tenantId, customerId])
+}
+
+model AnalyticsDaily {
+  tenantId  String @db.VarChar(64)
+  date      String @db.VarChar(10)
+  visits    Int
+  addToCart Int
+  checkouts Int
+
+  @@id([tenantId, date])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  tenantId  String   @db.VarChar(64)
+  userId    String?  @db.VarChar(64)
+  action    String   @db.VarChar(80)
+  entity    String   @db.VarChar(40)
+  entityId  String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+}

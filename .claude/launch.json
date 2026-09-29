@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "paraflow-api", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "server", "run", "dev"], "port": 4100 },
+    { "name": "paraflow", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "--port", "5188", "--strictPort"], "port": 5188 }
+  ]
+}
