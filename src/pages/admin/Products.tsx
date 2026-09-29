@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { CalendarClock, Download, LayoutGrid, List, Plus, Search, SlidersHorizontal } from 'lucide-react'
 import { useCan, useData, useSession } from '../../lib/store'
 import { CATEGORIES } from '../../data/catalog'
@@ -114,7 +114,7 @@ export default function Products() {
           <div role="radiogroup" aria-label="Affichage" className="flex p-0.5 rounded-lg bg-cream border border-line">
             {([['list', List, 'Liste'], ['grid', LayoutGrid, 'Grille']] as const).map(([v, Icon, label]) => (
               <button key={v} role="radio" aria-checked={view === v} title={label} onClick={() => setView(v)} className={cx('relative h-8 w-9 grid place-items-center rounded-md cursor-pointer', view === v ? 'text-ink' : 'text-soft hover:text-ink')}>
-                {view === v && <motion.span layoutId="products-view" className="absolute inset-0 rounded-md bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+                {view === v && <m.span layoutId="products-view" className="absolute inset-0 rounded-md bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
                 <Icon className="relative size-4" aria-hidden /><span className="sr-only">{label}</span>
               </button>
             ))}
@@ -131,7 +131,7 @@ export default function Products() {
             const pi = priceOf(d, p)
             const sold = sales30.get(p.id)?.qty ?? 0
             return (
-              <motion.button
+              <m.button
                 key={p.id} onClick={() => nav(`/admin/produits/${p.id}`)}
                 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: Math.min(i, 12) * 0.04 }}
                 className="group text-left card card-hover overflow-hidden cursor-pointer focus-visible:outline-2"
@@ -161,7 +161,7 @@ export default function Products() {
                     </div>
                   </div>
                 </div>
-              </motion.button>
+              </m.button>
             )
           })}
         </div>

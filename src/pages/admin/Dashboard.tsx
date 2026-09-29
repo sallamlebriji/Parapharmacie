@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { m as Mo } from 'framer-motion'
 import { AlertTriangle, ArrowRight, CalendarClock, CreditCard, PackageCheck, PackageX, ShoppingBag, Truck, Users } from 'lucide-react'
 import { useData, useSession } from '../../lib/store'
 import { CATEGORY_LABEL } from '../../data/plans'
@@ -21,7 +21,7 @@ function HealthRing({ value }: { value: number }) {
     <div className="relative size-36 shrink-0">
       <svg viewBox="0 0 120 120" className="size-full -rotate-90" aria-hidden>
         <circle cx="60" cy="60" r={r} fill="none" stroke="var(--color-cream)" strokeWidth="10" />
-        <motion.circle cx="60" cy="60" r={r} fill="none" stroke={tone} strokeWidth="10" strokeLinecap="round" strokeDasharray={c}
+        <Mo.circle cx="60" cy="60" r={r} fill="none" stroke={tone} strokeWidth="10" strokeLinecap="round" strokeDasharray={c}
           initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - value / 100) }} transition={{ duration: 1.6, ease: EASE }} />
       </svg>
       <div className="absolute inset-0 grid place-items-center text-center">
@@ -218,7 +218,7 @@ export default function Dashboard() {
                 <div className="min-w-0 flex-1">
                   <Link to={`/admin/produits/${t.p.id}`} className="block text-[13px] font-medium truncate hover:text-sage-600">{t.p.name}</Link>
                   {productTab === 'top'
-                    ? <div className="mt-1 h-1 rounded-full bg-cream overflow-hidden"><motion.div className="h-full rounded-full bg-sage-400 origin-left" initial={{ scaleX: 0 }} animate={{ scaleX: t.qty / maxQty }} transition={{ duration: 1, ease: EASE, delay: i * 0.05 }} /></div>
+                    ? <div className="mt-1 h-1 rounded-full bg-cream overflow-hidden"><Mo.div className="h-full rounded-full bg-sage-400 origin-left" initial={{ scaleX: 0 }} animate={{ scaleX: t.qty / maxQty }} transition={{ duration: 1, ease: EASE, delay: i * 0.05 }} /></div>
                     : <div className="text-[11px] text-muted">{'stock' in t ? `${t.stock} en stock` : ''}</div>}
                 </div>
                 <div className="text-right">
@@ -299,7 +299,7 @@ export default function Dashboard() {
       <Card title="Analyses" subtitle="Tendances sur 12 semaines" action={
         <Tabs value={insight} onChange={setInsight} tabs={[{ id: 'categories', label: 'Catégories' }, { id: 'canaux', label: 'Canaux' }, { id: 'clients', label: 'Clients' }, { id: 'stock', label: 'Stock' }, { id: 'marge', label: 'Marge' }]} />
       }>
-        <motion.div key={insight} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
+        <Mo.div key={insight} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
           {insight === 'categories' && (
             <div className="grid md:grid-cols-[260px_1fr] gap-6 items-center">
               <Donut data={m.catTop} unit="DH" height={220} center={{ value: money(m.ca), label: 'CA période' }} />
@@ -310,7 +310,7 @@ export default function Dashboard() {
           {insight === 'clients' && <Bars data={custMix} x="label" stacked series={[{ key: 'existants', label: 'Existants' }, { key: 'nouveaux', label: 'Nouveaux', color: 'var(--color-teal-500)' }]} height={280} />}
           {insight === 'stock' && <TrendChart data={stockTrend} x="label" series={[{ key: 'stock', label: 'Unités en stock', color: 'var(--color-teal-500)' }]} height={280} />}
           {insight === 'marge' && <TrendChart data={weekly} x="label" unit="%" kind="line" series={[{ key: 'tauxMarge', label: 'Taux de marge', color: 'var(--color-champagne-400)' }]} height={280} />}
-        </motion.div>
+        </Mo.div>
       </Card>
     </div>
   )

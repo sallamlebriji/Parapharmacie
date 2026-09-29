@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, animate, motion, useInView, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion'
 import { AlertCircle, ArrowDownRight, ArrowUpRight, CheckCircle2, Star, X } from 'lucide-react'
 import type { OrderStatus, PaymentStatus, POStatus } from '../lib/types'
 import type { StockState } from '../lib/logic'
@@ -71,7 +71,8 @@ export function AnimatedNumber({ value, className }: { value: string | number; c
   const inView = useInView(ref, { once: true, margin: '-40px' })
   const reduce = useReducedMotion()
   const str = String(value)
-  const m = str.match(/^([^\d-]*)(-?\d[\d\s.  ]*(?:,\d+)?)(.*)$/)
+  // The number group must end on a digit so the space before « DH » / « % » stays in the suffix.
+  const m = str.match(/^([^\d-]*)(-?\d(?:[\d\s.  ]*\d)?(?:,\d+)?)(.*)$/)
   const target = m ? Number(m[2].replace(/[\s.  ]/g, '').replace(',', '.')) : NaN
   const decimals = m && m[2].includes(',') ? m[2].split(',')[1].length : 0
   const group = m?.[2].match(/\d([\s.  ])\d{3}/)?.[1] ?? ''
@@ -84,8 +85,16 @@ export function AnimatedNumber({ value, className }: { value: string | number; c
     if (Number.isNaN(target) || !m) { setShown(str); return }
     if (reduce) { setShown(str); return }
     if (!inView) return
-    const c = animate(0, target, { duration: DURATION.counter, ease: EASE, onUpdate: (v) => setShown(`${m[1]}${fmt(v)}${m[3]}`) })
-    return () => c.stop()
+    // Tiny rAF tween (ease-out quint ≈ the signature curve) — avoids shipping an animation engine for counters.
+    let raf = 0
+    const start = performance.now()
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / (DURATION.counter * 1000))
+      setShown(`${m[1]}${fmt(target * (1 - Math.pow(1 - t, 5)))}${m[3]}`)
+      if (t < 1) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
   }, [inView, str]) // eslint-disable-line react-hooks/exhaustive-deps
   return <span ref={ref} className={cx('num', className)} aria-label={str}>{shown}</span>
 }
@@ -131,7 +140,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: { t
         const active = value === t.id
         return (
           <button key={t.id} role="tab" aria-selected={active} onClick={() => onChange(t.id)} className={cx('relative h-8 px-3 rounded-lg text-xs font-medium whitespace-nowrap cursor-pointer transition-colors', active ? 'text-ink' : 'text-muted hover:text-ink')}>
-            {active && <motion.span layoutId={`tab-${id}`} className="absolute inset-0 rounded-lg bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+            {active && <m.span layoutId={`tab-${id}`} className="absolute inset-0 rounded-lg bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
             <span className="relative">
               {t.label}
               {t.count !== undefined && <span className={cx('ml-1.5 num', active ? 'text-sage-600' : 'text-soft')}>{t.count}</span>}
@@ -156,7 +165,7 @@ export function Field({ label, children, hint, className }: { label: string; chi
 export function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label?: string }) {
   return (
     <button type="button" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className={cx('relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors duration-300 cursor-pointer', on ? 'bg-accent' : 'bg-sand')}>
-      <motion.span layout transition={{ type: 'spring', stiffness: 600, damping: 36 }} className={cx('absolute top-0.5 size-4 rounded-full bg-surface shadow', on ? 'right-0.5' : 'left-0.5')} />
+      <m.span layout transition={{ type: 'spring', stiffness: 600, damping: 36 }} className={cx('absolute top-0.5 size-4 rounded-full bg-surface shadow', on ? 'right-0.5' : 'left-0.5')} />
     </button>
   )
 }
@@ -184,8 +193,8 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[var(--z-overlay)] flex items-end sm:items-center justify-center p-0 sm:p-6">
-          <motion.div variants={overlay} initial="hidden" animate="show" exit="exit" className="absolute inset-0 bg-ink/30 backdrop-blur-[3px]" onClick={onClose} />
-          <motion.div
+          <m.div variants={overlay} initial="hidden" animate="show" exit="exit" className="absolute inset-0 bg-ink/30 backdrop-blur-[3px]" onClick={onClose} />
+          <m.div
             ref={panel} role="dialog" aria-modal="true" tabIndex={-1} variants={dialog} initial="hidden" animate="show" exit="exit"
             className={cx('relative bg-surface w-full rounded-t-[1.5rem] sm:rounded-[1.5rem] shadow-float border border-line max-h-[92vh] flex flex-col outline-none', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}
           >
@@ -195,7 +204,7 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
             </header>
             <div className="p-6 overflow-y-auto scrollbar-thin">{children}</div>
             {footer && <footer className="px-6 py-4 border-t border-line flex flex-wrap justify-end gap-2 bg-ivory/60 rounded-b-[1.5rem]">{footer}</footer>}
-          </motion.div>
+          </m.div>
         </div>
       )}
     </AnimatePresence>,
@@ -209,8 +218,8 @@ export function Drawer({ open, onClose, title, children, side = 'right', footer 
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[var(--z-overlay)]">
-          <motion.div variants={overlay} initial="hidden" animate="show" exit="exit" className="absolute inset-0 bg-ink/30 backdrop-blur-[2px]" onClick={onClose} />
-          <motion.aside
+          <m.div variants={overlay} initial="hidden" animate="show" exit="exit" className="absolute inset-0 bg-ink/30 backdrop-blur-[2px]" onClick={onClose} />
+          <m.aside
             ref={panel} role="dialog" aria-modal="true" tabIndex={-1} variants={drawerVariants(side)} initial="hidden" animate="show" exit="exit"
             className={cx('absolute inset-y-0 w-[22rem] max-w-[88vw] bg-surface shadow-float flex flex-col outline-none', side === 'left' ? 'left-0 border-r border-line' : 'right-0 border-l border-line')}
           >
@@ -222,7 +231,7 @@ export function Drawer({ open, onClose, title, children, side = 'right', footer 
             )}
             <div className="flex-1 overflow-y-auto scrollbar-thin">{children}</div>
             {footer && <footer className="p-4 border-t border-line">{footer}</footer>}
-          </motion.aside>
+          </m.aside>
         </div>
       )}
     </AnimatePresence>,
@@ -275,7 +284,7 @@ export function Progress({ value, tone = 'sage', className }: { value: number; t
   const v = Math.max(0, Math.min(100, value))
   return (
     <div className={cx('h-1.5 rounded-full bg-cream overflow-hidden', className)} role="progressbar" aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100}>
-      <motion.div className={cx('h-full w-full rounded-full origin-left', c)} initial={{ scaleX: 0 }} animate={{ scaleX: v / 100 }} transition={{ duration: 0.9, ease: EASE }} />
+      <m.div className={cx('h-full w-full rounded-full origin-left', c)} initial={{ scaleX: 0 }} animate={{ scaleX: v / 100 }} transition={{ duration: 0.9, ease: EASE }} />
     </div>
   )
 }
@@ -327,12 +336,12 @@ export function Toaster() {
     <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[var(--z-toast)] flex flex-col gap-2 items-center pointer-events-none px-4" role="status" aria-live="polite">
       <AnimatePresence initial={false}>
         {items.map((t) => (
-          <motion.div
+          <m.div
             key={t.id} layout initial={{ opacity: 0, y: 16, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }} transition={{ duration: 0.4, ease: EASE }}
             className={cx('pointer-events-auto flex items-center gap-2.5 text-sm px-4 py-2.5 rounded-2xl shadow-float max-w-md border', t.tone === 'error' ? 'bg-rose-ink text-white border-rose-ink' : 'bg-sage-900 text-white border-white/10')}
           >
             {t.tone === 'error' ? <AlertCircle className="size-4 shrink-0" /> : <CheckCircle2 className="size-4 text-sage-300 shrink-0" />} {t.text}
-          </motion.div>
+          </m.div>
         ))}
       </AnimatePresence>
     </div>

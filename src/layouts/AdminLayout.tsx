@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import {
   BarChart3, Bell, Boxes, Building2, CalendarClock, CircleDollarSign, ClipboardList, ExternalLink, Gift, LayoutDashboard, LogOut,
   Megaphone, Menu, MessageCircle, Monitor, Moon, Package, Percent, Plus, Receipt, Search, Settings, ShoppingBag, Store, Sun, SunMoon,
@@ -70,12 +70,12 @@ function Dropdown({ trigger, children, align = 'right', width = 'w-72' }: { trig
       <div onClick={() => setOpen((o) => !o)}>{trigger(open)}</div>
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4, scale: 0.98 }} transition={{ duration: 0.25, ease: EASE }}
             className={cx('absolute z-[var(--z-dropdown)] mt-2 card shadow-float p-1.5 origin-top', width, align === 'right' ? 'right-0 origin-top-right' : 'left-0 origin-top-left')}
           >
             {children(() => setOpen(false))}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
@@ -141,7 +141,7 @@ function ThemeSwitch() {
     <div role="radiogroup" aria-label="Thème" className="flex p-0.5 rounded-lg bg-cream border border-line">
       {THEMES.map((t) => (
         <button key={t.id} role="radio" aria-checked={pref === t.id} title={t.label} onClick={() => setTheme(t.id)} className={cx('relative flex-1 h-7 grid place-items-center rounded-md cursor-pointer transition-colors', pref === t.id ? 'text-ink' : 'text-soft hover:text-ink')}>
-          {pref === t.id && <motion.span layoutId="theme-pill" className="absolute inset-0 rounded-md bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+          {pref === t.id && <m.span layoutId="theme-pill" className="absolute inset-0 rounded-md bg-surface shadow-soft" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
           <t.icon className="relative size-3.5" aria-hidden /><span className="sr-only">{t.label}</span>
         </button>
       ))}
@@ -220,9 +220,9 @@ function AdminShell() {
                 return (
                   <NavLink key={i.to} to={i.to} end={i.to === '/admin'} className={cx('relative flex items-center gap-2.5 px-2.5 h-9 rounded-lg text-[13px] transition-colors', active ? 'text-sage-700 font-medium' : 'text-muted hover:text-ink hover:bg-cream/80')}>
                     {active && (
-                      <motion.span layoutId={`nav-${layoutKey}`} className="absolute inset-0 rounded-lg bg-sage-50 border border-sage-100" transition={{ type: 'spring', stiffness: 460, damping: 38 }}>
+                      <m.span layoutId={`nav-${layoutKey}`} className="absolute inset-0 rounded-lg bg-sage-50 border border-sage-100" transition={{ type: 'spring', stiffness: 460, damping: 38 }}>
                         <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-accent" />
-                      </motion.span>
+                      </m.span>
                     )}
                     <i.icon className="relative size-4" strokeWidth={1.75} aria-hidden /> <span className="relative">{i.label}</span>
                   </NavLink>
@@ -263,14 +263,14 @@ function AdminShell() {
             <kbd className="hidden md:flex absolute right-2.5 top-1/2 -translate-y-1/2 h-5 items-center px-1.5 rounded-md border border-line bg-cream text-[10px] text-soft font-sans">Ctrl K</kbd>
             <AnimatePresence>
               {results.length > 0 && (
-                <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.22, ease: EASE }} className="absolute mt-2 w-full card shadow-float p-1.5 z-[var(--z-dropdown)]" role="listbox">
+                <m.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.22, ease: EASE }} className="absolute mt-2 w-full card shadow-float p-1.5 z-[var(--z-dropdown)]" role="listbox">
                   {results.map((r) => (
                     <button key={r.to} role="option" onClick={() => { nav(r.to); setQ('') }} className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-cream cursor-pointer">
                       <span className="text-[10px] uppercase tracking-wider text-soft w-16 shrink-0">{r.kind}</span>
                       <span className="min-w-0"><span className="block text-sm truncate">{r.label}</span><span className="block text-[11px] text-muted truncate">{r.sub}</span></span>
                     </button>
                   ))}
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>

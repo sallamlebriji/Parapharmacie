@@ -144,9 +144,10 @@
   --color-champagne-400: #d2b27a;
   --color-champagne-600: #e0c690;
 
-  --color-accent: #4d9a72;
-  --color-accent-hover: #5bab81;
-  --color-on-accent: #07120c;
+  /* White on deep eucalyptus keeps CTAs readable (≈ 5.2:1) on dark surfaces. */
+  --color-accent: #367a57;
+  --color-accent-hover: #3f8a63;
+  --color-on-accent: #ffffff;
 
   --color-rose-soft: #3a1d1a;
   --color-rose-ink: #f2a195;
@@ -229,6 +230,8 @@
   & th:first-child { @apply pl-5; }
   & td { @apply px-4 py-3 border-b border-line/70 align-middle; }
   & td:first-child { @apply pl-5; }
+  /* An amount and its unit never break across lines in a table. */
+  & td.num, & td.text-right { white-space: nowrap; }
   & tbody tr { transition: background-color 0.2s var(--ease-soft); }
   & tbody tr:hover { background-color: color-mix(in oklab, var(--color-sage-50) 70%, transparent); }
   & tbody tr:last-child td { border-bottom: 0; }
