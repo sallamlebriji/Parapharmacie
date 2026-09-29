@@ -70,7 +70,7 @@ export default function Login() {
               </li>
             ))}
           </ul>
-          {!demoPassword && <p className="text-xs text-muted mt-3">Mot de passe : valeur DEMO_PASSWORD de server/.env.</p>}
+          {!demoPassword && <p className="text-xs text-muted mt-3">Mot de passe : Password</p>}
         </div>
       </div>
     </div>
