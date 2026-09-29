@@ -1,6 +1,6 @@
 /** Thin fetch wrapper for the Paraflow REST API (/api/v1, proxied to the Express server in dev). */
 
-export const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api/v1'
+export const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://parapharmacie-ssgh.onrender.com/api/v1'
 
 export class ApiError extends Error {
   constructor(public status: number, message: string, public details?: unknown) { super(message) }
