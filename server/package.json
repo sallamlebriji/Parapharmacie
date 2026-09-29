@@ -37,4 +37,14 @@
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   }
+  "scripts": {
+  "dev": "tsx watch src/index.ts",
+  "build": "tsc",
+  "start": "tsx src/index.ts",
+  "typecheck": "tsc --noEmit",
+  "db:push": "prisma db push",
+  "db:seed": "tsx src/seed.ts",
+  "db:reset": "prisma db push --force-reset --accept-data-loss && tsx src/seed.ts",
+  "test": "tsx --test tests/*.test.ts"
+}
 }
