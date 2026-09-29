@@ -19,8 +19,13 @@ export function createApp() {
   app.use(express.json({ limit: '2mb' }))
 
   app.get('/api/health', async (_req, res) => {
-    await prisma.$queryRaw`SELECT 1`
-    res.json({ ok: true, db: 'mysql', time: new Date().toISOString() })
+    try {
+      await prisma.$queryRaw`SELECT 1`
+      res.json({ ok: true, db: 'mysql', time: new Date().toISOString() })
+    } catch (e) {
+      // Report the database problem instead of letting the rejection crash the process.
+      res.status(503).json({ ok: false, error: e instanceof Error ? e.message.split('\n').filter(Boolean).pop() : 'Base de données indisponible' })
+    }
   })
 
   const v1 = express.Router()
