@@ -16,14 +16,46 @@ export default function Lots() {
   const [alerts, setAlerts] = useState({ 90: true, 60: true, 30: true, 7: true })
   const lots = d.lots.filter((l) => l.qty > 0 && (scope === 'all' || l.storeId === scope))
   const inWin = (days: number) => lots.filter((l) => daysUntil(l.expiresAt) <= days)
-  const list = (win === 'tous' ? lots : inWin(+win))
+  const list = (win === 'tous' ? lots : win === 'expires' ? lots.filter((l) => daysUntil(l.expiresAt) < 0) : inWin(+win))
     .filter((l) => { const p = d.products.find((x) => x.id === l.productId)!; return !q || `${p.name} ${l.number} ${p.brand}`.toLowerCase().includes(q.toLowerCase()) })
     .sort((a, b) => a.expiresAt.localeCompare(b.expiresAt))
   const cost = (l: typeof lots[number]) => l.qty * (d.products.find((p) => p.id === l.productId)?.purchasePrice ?? 0)
+  const expired = lots.filter((l) => daysUntil(l.expiresAt) < 0)
+  // Units expiring per week over the next 13 weeks — the timeline shows when the pressure comes.
+  const weeks = Array.from({ length: 13 }, (_, w) => {
+    const inWeek = lots.filter((l) => { const dd = daysUntil(l.expiresAt); return dd >= w * 7 && dd < (w + 1) * 7 })
+    return { w, units: sum(inWeek, (l) => l.qty), lots: inWeek.length }
+  })
+  const peak = Math.max(1, ...weeks.map((w) => w.units))
 
   return (
     <div>
       <PageHeader title="Lots & expirations" subtitle="Traçabilité complète par numéro de lot, date de réception et fournisseur." />
+      {expired.length > 0 && (
+        <button onClick={() => setWin('expires')} className="w-full mb-4 card card-hover flex items-center gap-3 px-4 py-3 text-sm text-left cursor-pointer border-l-4 border-l-rose-ink">
+          <span className="size-9 rounded-xl grid place-items-center bg-rose-soft text-rose-ink shrink-0"><Trash2 className="size-4" aria-hidden /></span>
+          <span><b className="text-rose-ink num">{expired.length} lots expirés</b> encore en stock ({sum(expired, (l) => l.qty)} unités) — à retirer de la vente.</span>
+        </button>
+      )}
+      <Card title="Calendrier des expirations" subtitle="Unités qui arrivent à expiration, semaine par semaine (13 semaines)" className="mb-4">
+        <div className="flex items-end gap-1.5 h-32" role="list">
+          {weeks.map((w) => (
+            <div key={w.w} role="listitem" className="flex-1 h-full flex flex-col justify-end items-center gap-1.5 group" title={`Semaine ${w.w + 1} : ${w.units} unités (${w.lots} lots)`}>
+              <span className="text-[10px] text-muted num opacity-0 group-hover:opacity-100 transition-opacity">{w.units || ''}</span>
+              <div
+                className={cx('w-full rounded-md origin-bottom transition-transform duration-700 ease-signature', w.w === 0 ? 'bg-rose-ink' : w.w < 5 ? 'bg-amber-ink/80' : 'bg-sage-300', w.units === 0 && 'bg-cream')}
+                style={{ height: `${Math.max(4, (w.units / peak) * 100)}%` }}
+              />
+              <span className="text-[10px] text-soft">S{w.w + 1}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-4 mt-3 text-[11px] text-muted">
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-sm bg-rose-ink" />Cette semaine</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-sm bg-amber-ink/80" />Sous 30 jours</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-sm bg-sage-300" />Plus tard</span>
+        </div>
+      </Card>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         {WINDOWS.map((w) => {
           const l = inWin(w)
@@ -39,7 +71,7 @@ export default function Lots() {
       <div className="grid lg:grid-cols-4 gap-4">
         <Card padded={false} className="lg:col-span-3">
           <div className="flex flex-wrap items-center gap-3 p-4">
-            <Tabs value={win} onChange={setWin} tabs={[...WINDOWS.map((w) => ({ id: String(w), label: `≤ ${w} j` })), { id: 'tous', label: 'Tous les lots' }]} />
+            <Tabs value={win} onChange={setWin} tabs={[{ id: 'expires', label: 'Expirés', count: lots.filter((l) => daysUntil(l.expiresAt) < 0).length }, ...WINDOWS.map((w) => ({ id: String(w), label: `≤ ${w} j` })), { id: 'tous', label: 'Tous les lots' }]} />
             <div className="relative ml-auto w-full sm:w-60">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-soft" />
               <input className="input pl-9" placeholder="Produit ou n° de lot" value={q} onChange={(e) => setQ(e.target.value)} />

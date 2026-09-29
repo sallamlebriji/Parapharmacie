@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Banknote, CreditCard, Minus, Plus, Printer, RotateCcw, ScanBarcode, Search, Trash2, UserRound, Wallet, X } from 'lucide-react'
 import { actions, useCan, useData, useSession, useTenant } from '../../lib/store'
 import { CATEGORIES } from '../../data/catalog'
@@ -70,6 +70,17 @@ function Sale({ storeId }: { storeId: string }) {
   const ptsDisc = usePoints ? Math.round(maxPts * t.settings.pointValue) : 0
   const total = Math.max(0, subtotal - disc - ptsDisc)
 
+  // Keyboard-first checkout: F2 search, F8 cash, F9 card (the modal's Enter/Esc handle the rest).
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      if (e.key === 'F2') { e.preventDefault(); scanRef.current?.focus() }
+      if (e.key === 'F9' && lines.length && !pay) { e.preventDefault(); setPay('carte') }
+      if (e.key === 'F8' && lines.length && !pay) { e.preventDefault(); setPay('especes'); setGiven(Math.ceil(total / 50) * 50) }
+    }
+    window.addEventListener('keydown', k)
+    return () => window.removeEventListener('keydown', k)
+  }, [lines.length, pay, total])
+
   const validate = async () => {
     setBusy(true)
     try {
@@ -86,7 +97,7 @@ function Sale({ storeId }: { storeId: string }) {
         <div className="card p-3 flex gap-2">
           <div className="relative flex-1">
             <ScanBarcode className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-sage-500" />
-            <input ref={scanRef} autoFocus className="input pl-9" placeholder="Scanner un code-barres ou rechercher un produit…" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (products.length === 1 ? (add(products[0].id), setQ('')) : scan(q))} />
+            <input ref={scanRef} autoFocus className="input pl-9" placeholder="Scanner un code-barres ou rechercher un produit… (F2)" aria-label="Scanner ou rechercher un produit" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (products.length === 1 ? (add(products[0].id), setQ('')) : scan(q))} />
           </div>
           <button className="btn-secondary" title="Simuler un scan" onClick={() => { const p = d.products[Math.floor(Math.random() * d.products.length)]; scan(p.barcode); scanRef.current?.focus() }}><ScanBarcode className="size-4" /> Scan démo</button>
         </div>
@@ -162,8 +173,8 @@ function Sale({ storeId }: { storeId: string }) {
             {disc + ptsDisc > 0 && <div className="flex justify-between text-sm text-sage-600"><span>Réductions</span><span className="tabular-nums">−{money(disc + ptsDisc, true)}</span></div>}
             <div className="flex justify-between text-xl font-semibold pt-1"><span>Total</span><span className="tabular-nums">{money(total, true)}</span></div>
             <div className="grid grid-cols-2 gap-2 pt-2">
-              <button disabled={!lines.length} onClick={() => { setPay('carte') }} className="btn-primary h-12"><CreditCard className="size-4" /> Carte</button>
-              <button disabled={!lines.length} onClick={() => { setPay('especes'); setGiven(Math.ceil(total / 50) * 50) }} className="btn-gold h-12"><Banknote className="size-4" /> Espèces</button>
+              <button disabled={!lines.length} onClick={() => { setPay('carte') }} className="btn-primary h-12"><CreditCard className="size-4" /> Carte <kbd className="ml-1 text-[10px] opacity-70 font-sans">F9</kbd></button>
+              <button disabled={!lines.length} onClick={() => { setPay('especes'); setGiven(Math.ceil(total / 50) * 50) }} className="btn-gold h-12"><Banknote className="size-4" /> Espèces <kbd className="ml-1 text-[10px] opacity-70 font-sans">F8</kbd></button>
             </div>
           </div>
         </div>

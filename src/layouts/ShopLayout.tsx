@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Heart, LayoutDashboard, Loader2, Menu, Search, ShoppingBag, Sparkles, Truck, User, X } from 'lucide-react'
+import { Heart, LayoutDashboard, Menu, Search, ShoppingBag, Sparkles, Truck, User, X } from 'lucide-react'
 import { actions, ShopScope, useApp, useData, useShop, useTenant } from '../lib/store'
 import { CATEGORIES, NEEDS } from '../data/catalog'
 import { money } from '../lib/format'
 import { isLive, priceOf } from '../lib/logic'
 import { ChatWidget } from '../components/ChatWidget'
 import { ProductVisual } from '../components/ProductVisual'
-import { Countdown, cx } from '../components/ui'
+import { Countdown, Skeleton, cx } from '../components/ui'
 
 export function SmartSearch({ big, onDone }: { big?: boolean; onDone?: () => void }) {
   const d = useData()
@@ -65,10 +65,20 @@ export default function ShopLayout() {
     setError('')
     actions.loadShop(wanted).catch((e) => setError(e.message))
   }, [wanted])
-  if (!ready) return (
+  if (error) return (
     <div className="min-h-screen grid place-items-center bg-ivory text-sm text-muted">
-      {error ? <div className="text-center max-w-sm px-4"><p className="font-display text-2xl text-ink">Boutique indisponible</p><p className="mt-2">{error}</p><Link to="/" className="btn-secondary mt-5">Retour</Link></div>
-        : <span className="flex items-center gap-2"><Loader2 className="size-4 animate-spin" /> Chargement de la boutique {slug}…</span>}
+      <div className="text-center max-w-sm px-4"><p className="font-display text-2xl text-ink">Boutique indisponible</p><p className="mt-2">{error}</p><Link to="/" className="btn-secondary mt-5">Retour</Link></div>
+    </div>
+  )
+  if (!ready) return (
+    <div className="min-h-screen bg-ivory" aria-busy="true" aria-label={`Chargement de la boutique ${slug}`}>
+      <div className="h-9 bg-sage-800" />
+      <div className="h-16 border-b border-line max-w-7xl mx-auto px-4 flex items-center gap-4"><Skeleton className="h-8 w-40" /><Skeleton className="h-10 flex-1 max-w-xl mx-auto rounded-full" /><Skeleton className="h-8 w-28" /></div>
+      <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-10">
+        <div className="space-y-4"><Skeleton className="h-7 w-64 rounded-full" /><Skeleton className="h-16 w-full" /><Skeleton className="h-16 w-4/5" /><Skeleton className="h-5 w-3/5" /><Skeleton className="h-12 w-72 rounded-xl" /></div>
+        <Skeleton className="h-80 rounded-[2rem]" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">{Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="aspect-[3/4] rounded-[var(--radius-card)]" />)}</div>
     </div>
   )
   return <ShopScope.Provider value={true}><ShopShell /></ShopScope.Provider>

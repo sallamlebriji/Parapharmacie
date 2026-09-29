@@ -5,6 +5,7 @@ import { money } from '../lib/format'
 import { availableStock, priceOf } from '../lib/logic'
 import type { Product } from '../lib/types'
 import { ProductVisual } from './ProductVisual'
+import { Tilt } from './Tilt'
 import { Stars, cx, toast } from './ui'
 
 export function ProductCard({ p, compact }: { p: Product; compact?: boolean }) {
@@ -14,16 +15,18 @@ export function ProductCard({ p, compact }: { p: Product; compact?: boolean }) {
   const stock = availableStock(d, p.id)
   const wished = shop.wishlists.some((w) => w.productIds.includes(p.id))
   return (
-    <div className="group relative card overflow-hidden transition hover:shadow-lift hover:-translate-y-0.5">
+    <div className="group relative card card-hover overflow-hidden">
       <Link to={`/boutique/produit/${p.id}`} className="block">
-        <div className="relative aspect-square overflow-hidden">
-          <ProductVisual shape={p.shape} color={p.color} brand={p.brand} name={p.name} className="w-full h-full transition duration-500 group-hover:scale-[1.04]" />
+        <Tilt className="relative aspect-square">
+          <div className="relative h-full overflow-hidden">
+          <ProductVisual shape={p.shape} color={p.color} brand={p.brand} name={p.name} className="w-full h-full transition duration-700 ease-signature group-hover:scale-[1.03]" />
           <div className="absolute top-3 left-3 flex flex-col gap-1">
             {pi.label && <span className="chip bg-rose-ink text-white">{pi.label}</span>}
             {p.isNew && <span className="chip bg-surface/90 text-sage-700 border border-sage-200">Nouveau</span>}
             {stock === 0 && <span className="chip bg-ink/80 text-white">Épuisé</span>}
           </div>
-        </div>
+          </div>
+        </Tilt>
         <div className={cx('p-4', compact && 'p-3')}>
           <div className="text-[11px] uppercase tracking-[0.12em] text-champagne-600">{p.brand}</div>
           <div className="text-sm font-medium leading-snug mt-1 line-clamp-2 min-h-10">{p.name}</div>

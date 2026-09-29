@@ -57,12 +57,18 @@ export default function Suppliers() {
             </table>
           )}
           {tab === 'commandes' && (
-            <table className="table-base">
-              <thead><tr><th>N°</th><th>Date</th><th className="text-right">Montant</th><th>Statut</th></tr></thead>
-              <tbody>{d.purchaseOrders.filter((p) => p.supplierId === s.id).map((p) => (
-                <tr key={p.id}><td>{p.number}</td><td className="text-muted">{date(p.createdAt)}</td><td className="text-right tabular-nums">{money(sum(p.lines, (l) => l.qty * l.unitCost))}</td><td><StatusBadge map={PO_STATUS} value={p.status} /></td></tr>
-              ))}</tbody>
-            </table>
+            <ol className="relative border-l border-line ml-2 space-y-4 py-1">
+              {[...d.purchaseOrders].filter((p) => p.supplierId === s.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((p) => (
+                <li key={p.id} className="pl-5 relative">
+                  <span className={`absolute -left-[5px] top-1.5 size-2.5 rounded-full ring-4 ring-surface ${p.status === 'recue' ? 'bg-sage-500' : p.status === 'partielle' ? 'bg-amber-ink' : p.status === 'envoyee' ? 'bg-sky-ink' : 'bg-sand'}`} />
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm font-medium num">{p.number}</span>
+                    <span className="flex items-center gap-2"><span className="text-sm font-semibold num">{money(sum(p.lines, (l) => l.qty * l.unitCost))}</span><StatusBadge map={PO_STATUS} value={p.status} /></span>
+                  </div>
+                  <div className="text-[11px] text-muted num">{date(p.createdAt)} · {p.lines.length} ligne(s) · {sum(p.lines, (l) => l.received)}/{sum(p.lines, (l) => l.qty)} unités reçues</div>
+                </li>
+              ))}
+            </ol>
           )}
           {tab === 'factures' && (
             <table className="table-base">

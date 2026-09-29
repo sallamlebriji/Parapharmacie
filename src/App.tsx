@@ -54,7 +54,8 @@ export default function App() {
   return (
     <>
       <ScrollTop />
-      <Suspense fallback={<div className="min-h-screen grid place-items-center"><span className="size-6 rounded-full border-2 border-sage-200 border-t-sage-600 animate-spin" /></div>}>
+      {/* Route chunks load in a few ms: a thin progress bar instead of a centred spinner. */}
+      <Suspense fallback={<div className="fixed top-0 inset-x-0 h-0.5 z-[var(--z-toast)] overflow-hidden" aria-hidden><div className="h-full w-full skeleton !rounded-none" style={{ background: 'linear-gradient(90deg, transparent, var(--color-sage-400), transparent)', backgroundSize: '50% 100%' }} /></div>}>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/inscription" element={<Signup />} />

@@ -5,7 +5,7 @@ import { actions, useData } from '../../lib/store'
 import { date, money } from '../../lib/format'
 import { complementary, customerStats, SEGMENTS } from '../../lib/logic'
 import { SKIN_TYPES } from '../../data/catalog'
-import { Avatar, Badge, Card, Empty, Field, Modal, ORDER_STATUS, PageHeader, Progress, StatusBadge, toast } from '../../components/ui'
+import { Avatar, Badge, Card, Empty, Field, Modal, ORDER_STATUS, PageHeader, Progress, StatusBadge, cx, toast } from '../../components/ui'
 import { ProductVisual } from '../../components/ProductVisual'
 
 export default function CustomerDetail() {
@@ -59,6 +59,25 @@ export default function CustomerDetail() {
               <div className="text-xs text-muted mb-1.5">Coupons utilisés</div>
               <div className="flex flex-wrap gap-1.5">{c.couponsUsed.length ? c.couponsUsed.map((x, i) => <Badge key={i} tone="gold">{x}</Badge>) : <span className="text-sm text-soft">Aucun</span>}</div>
             </div>
+          </Card>
+          <Card title="Activité" subtitle="Achats en boutique et en ligne">
+            <ol className="relative border-l border-line ml-1.5 space-y-4">
+              {s.orders.slice(0, 8).map((o) => (
+                <li key={o.id} className="pl-4 relative">
+                  <span className={cx('absolute -left-[5px] top-1.5 size-2.5 rounded-full ring-4 ring-surface', o.channel === 'web' ? 'bg-teal-500' : 'bg-sage-500')} />
+                  <div className="flex items-center justify-between gap-2 text-[13px]">
+                    <Link to={`/admin/commandes/${o.id}`} className="font-medium hover:text-sage-600">{o.channel === 'web' ? 'Commande en ligne' : 'Achat en boutique'}</Link>
+                    <span className="font-semibold num">{money(o.total)}</span>
+                  </div>
+                  <div className="text-[11px] text-muted num">{date(o.createdAt)} · {o.number} · {o.items.reduce((a, i) => a + i.qty, 0)} article(s)</div>
+                </li>
+              ))}
+              <li className="pl-4 relative">
+                <span className="absolute -left-[5px] top-1.5 size-2.5 rounded-full ring-4 ring-surface bg-champagne-400" />
+                <div className="text-[13px] font-medium">Création du compte client</div>
+                <div className="text-[11px] text-muted">{date(c.createdAt)}</div>
+              </li>
+            </ol>
           </Card>
         </div>
         <div className="lg:col-span-2 space-y-4">

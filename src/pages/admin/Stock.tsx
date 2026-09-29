@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AlertTriangle, ArrowDownToLine, ArrowLeftRight, CalendarClock, ClipboardCheck, Download, MinusCircle, PlusCircle, Search, SlidersHorizontal, Upload } from 'lucide-react'
-import { actions, useData, useSession } from '../../lib/store'
-import { dateTime, daysFromNow, download, iso, money, num, parseCSV, sum, toCSV } from '../../lib/format'
-import { expiringLots, stockIndex } from '../../lib/logic'
+import { actions, useCan, useData, useSession } from '../../lib/store'
+import { CATEGORY_LABEL } from '../../data/plans'
+import { dateTime, daysFromNow, daysUntil, download, iso, money, num, parseCSV, pct, sum, toCSV } from '../../lib/format'
+import { expiringLots, marginRate, priceOf, stockIndex } from '../../lib/logic'
 import { Badge, Card, Field, Modal, PageHeader, STOCK_STATE, Stat, StatusBadge, Tabs, cx, toast } from '../../components/ui'
 import { ProductVisual } from '../../components/ProductVisual'
 import type { MovementType } from '../../lib/types'
@@ -38,6 +39,14 @@ export default function Stock() {
   const out = rows.filter((r) => r.state === 'rupture')
   const exp = new Set(expiringLots(d, 60, scope).map((l) => l.productId))
   const list = rows.filter((r) => (!filter || r.state === filter) && (!q || `${r.p.name} ${r.p.brand} ${r.p.ref} ${r.p.barcode}`.toLowerCase().includes(q.toLowerCase())))
+  const can = useCan()
+  const suppliers = useMemo(() => new Map(d.suppliers.map((s) => [s.id, s.name])), [d.suppliers])
+  // Nearest expiry among lots still in stock, per product.
+  const nextExpiry = useMemo(() => {
+    const m = new Map<string, string>()
+    d.lots.forEach((l) => { if (l.qty > 0 && (scope === 'all' || l.storeId === scope)) { const c = m.get(l.productId); if (!c || l.expiresAt < c) m.set(l.productId, l.expiresAt) } })
+    return m
+  }, [d.lots, scope])
   const value = sum(d.lots.filter((l) => scope === 'all' || l.storeId === scope), (l) => l.qty * (d.products.find((p) => p.id === l.productId)?.purchasePrice ?? 0))
 
   const exportCSV = () => download('stock.csv', toCSV(d.lots.filter((l) => scope === 'all' || l.storeId === scope).map((l) => {
@@ -60,11 +69,13 @@ export default function Stock() {
         <button className="btn-primary" onClick={() => setOp({ op: 'entree' })}><ArrowDownToLine className="size-4" /> Mouvement de stock</button>
       </>} />
 
-      <div className="grid md:grid-cols-3 gap-3 mb-4">
-        {exp.size > 0 && <Link to="/admin/lots" className="flex items-center gap-3 rounded-2xl bg-rose-soft/70 border border-rose-soft px-4 py-3 text-sm text-rose-ink hover:shadow-soft"><CalendarClock className="size-5 shrink-0" /><span><b>{exp.size} produits</b> arrivent bientôt à expiration.</span></Link>}
-        {low.length > 0 && <button onClick={() => setParams({ f: 'faible' })} className="flex items-center gap-3 rounded-2xl bg-amber-soft/80 border border-amber-soft px-4 py-3 text-sm text-amber-ink text-left cursor-pointer hover:shadow-soft"><AlertTriangle className="size-5 shrink-0" /><span><b>{low.length} produits</b> sont sous le seuil minimum.</span></button>}
-        {out.length > 0 && <button onClick={() => setParams({ f: 'rupture' })} className="flex items-center gap-3 rounded-2xl bg-cream border border-line px-4 py-3 text-sm text-ink text-left cursor-pointer hover:shadow-soft"><MinusCircle className="size-5 shrink-0 text-rose-ink" /><span><b>{out.length} produits</b> sont en rupture.</span></button>}
-      </div>
+      {(exp.size > 0 || low.length > 0 || out.length > 0) && (
+        <div className="grid md:grid-cols-3 gap-3 mb-4" role="region" aria-label="Alertes de stock">
+          {out.length > 0 && <button onClick={() => setParams({ f: 'rupture' })} className="card card-hover flex items-center gap-3 px-4 py-3 text-sm text-left cursor-pointer border-l-4 border-l-rose-ink"><span className="size-9 rounded-xl grid place-items-center bg-rose-soft text-rose-ink shrink-0"><MinusCircle className="size-4" aria-hidden /></span><span><b className="text-rose-ink num">{out.length} produits</b> en rupture<span className="block text-[11px] text-muted">À réapprovisionner en priorité</span></span></button>}
+          {low.length > 0 && <button onClick={() => setParams({ f: 'faible' })} className="card card-hover flex items-center gap-3 px-4 py-3 text-sm text-left cursor-pointer border-l-4 border-l-amber-ink"><span className="size-9 rounded-xl grid place-items-center bg-amber-soft text-amber-ink shrink-0"><AlertTriangle className="size-4" aria-hidden /></span><span><b className="text-amber-ink num">{low.length} produits</b> sous le seuil minimum<span className="block text-[11px] text-muted">Dans au moins une boutique</span></span></button>}
+          {exp.size > 0 && <Link to="/admin/lots" className="card card-hover flex items-center gap-3 px-4 py-3 text-sm border-l-4 border-l-champagne-400"><span className="size-9 rounded-xl grid place-items-center bg-champagne-100 text-champagne-600 shrink-0"><CalendarClock className="size-4" aria-hidden /></span><span><b className="num">{exp.size} produits</b> expirent sous 60 jours<span className="block text-[11px] text-muted">Voir les lots concernés</span></span></Link>}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <Stat label="Unités en stock" value={num(sum(rows, (r) => r.physical))} />
@@ -89,29 +100,50 @@ export default function Stock() {
               <thead><tr>
                 <th>Produit</th>
                 {stores.length > 1 && stores.map((s) => <th key={s.id} className="text-right">{s.city}</th>)}
-                <th className="text-right">Physique</th><th className="text-right">Réservé</th><th className="text-right">Disponible</th><th className="text-right">Seuil</th><th>État</th><th></th>
+                <th className="text-right">Disponible</th><th className="text-right">Seuil</th>
+                {can('prix_achat.view') && <th className="text-right">Achat</th>}
+                <th className="text-right">Vente</th>
+                {can('prix_achat.view') && <th className="text-right">Marge</th>}
+                <th>Fournisseur</th><th>Expiration</th><th>État</th><th><span className="sr-only">Actions</span></th>
               </tr></thead>
               <tbody>
-                {list.map((r) => (
-                  <tr key={r.p.id}>
-                    <td>
-                      <div className="flex items-center gap-3 min-w-56">
-                        <ProductVisual shape={r.p.shape} color={r.p.color} brand={r.p.brand} className="size-9 rounded-lg shrink-0" />
-                        <div className="min-w-0"><Link to={`/admin/produits/${r.p.id}`} className="block font-medium truncate max-w-64 hover:text-sage-600">{r.p.name}</Link><div className="text-[11px] text-muted">{r.p.ref} {exp.has(r.p.id) && <Badge tone="rose" className="ml-1">Expiration proche</Badge>}</div></div>
-                      </div>
-                    </td>
-                    {stores.length > 1 && stores.map((s) => { const q = perStore(r.p.id, s.id); return <td key={s.id} className={cx('text-right tabular-nums', q <= r.p.alertThreshold && 'text-amber-ink font-medium', q === 0 && 'text-rose-ink')}>{q}</td> })}
-                    <td className="text-right tabular-nums">{r.physical}</td>
-                    <td className="text-right tabular-nums text-muted">{r.reserved || '—'}</td>
-                    <td className="text-right tabular-nums font-semibold">{r.available}</td>
-                    <td className="text-right tabular-nums text-muted">{r.p.alertThreshold * stores.length}</td>
-                    <td><StatusBadge map={STOCK_STATE} value={r.state} /></td>
-                    <td className="text-right whitespace-nowrap">
-                      <button className="btn-ghost btn-sm" onClick={() => setOp({ op: 'entree', productId: r.p.id })}>Entrée</button>
-                      <button className="btn-ghost btn-sm" onClick={() => setOp({ op: 'ajustement', productId: r.p.id })}>Ajuster</button>
-                    </td>
-                  </tr>
-                ))}
+                {list.map((r) => {
+                  const threshold = r.p.alertThreshold * stores.length
+                  const fill = Math.min(1, r.available / Math.max(1, threshold * 3))
+                  const expiry = nextExpiry.get(r.p.id)
+                  const days = expiry ? daysUntil(expiry) : null
+                  const pi = priceOf(d, r.p)
+                  return (
+                    <tr key={r.p.id} className={cx(r.state === 'rupture' && 'bg-rose-soft/35')}>
+                      <td className={cx('border-l-[3px]', r.state === 'rupture' ? 'border-l-rose-ink' : r.state === 'faible' ? 'border-l-amber-ink' : 'border-l-transparent')}>
+                        <div className="flex items-center gap-3 min-w-60">
+                          <ProductVisual shape={r.p.shape} color={r.p.color} brand={r.p.brand} className="size-10 rounded-xl shrink-0" />
+                          <div className="min-w-0">
+                            <Link to={`/admin/produits/${r.p.id}`} className="block font-medium truncate max-w-64 hover:text-sage-600">{r.p.name}</Link>
+                            <div className="text-[11px] text-muted num">{CATEGORY_LABEL[r.p.category]} · {r.p.ref}</div>
+                          </div>
+                        </div>
+                      </td>
+                      {stores.length > 1 && stores.map((s) => { const q = perStore(r.p.id, s.id); return <td key={s.id} className={cx('text-right num', q <= r.p.alertThreshold && 'text-amber-ink font-medium', q === 0 && 'text-rose-ink')}>{q}</td> })}
+                      <td className="text-right">
+                        <div className={cx('text-[15px] font-semibold num', r.state === 'rupture' ? 'text-rose-ink' : r.state === 'faible' ? 'text-amber-ink' : 'text-ink')}>{r.available}</div>
+                        <div className="ml-auto mt-1 h-1 w-16 rounded-full bg-cream overflow-hidden" aria-hidden><div className={cx('h-full w-full origin-left rounded-full', r.state === 'rupture' ? 'bg-rose-ink' : r.state === 'faible' ? 'bg-amber-ink' : 'bg-sage-400')} style={{ transform: `scaleX(${fill})` }} /></div>
+                        {r.reserved > 0 && <div className="text-[10px] text-muted mt-0.5">{r.reserved} réservé(s)</div>}
+                      </td>
+                      <td className="text-right num text-muted">{threshold}</td>
+                      {can('prix_achat.view') && <td className="text-right num text-muted">{money(r.p.purchasePrice)}</td>}
+                      <td className="text-right num whitespace-nowrap">{pi.oldPrice ? <span className="text-rose-ink font-medium">{money(pi.price)}</span> : money(r.p.price)}</td>
+                      {can('prix_achat.view') && <td className="text-right num">{pct(marginRate(r.p) * 100, 0)}</td>}
+                      <td className="text-xs text-muted max-w-36 truncate">{suppliers.get(r.p.supplierId) ?? '—'}</td>
+                      <td className="whitespace-nowrap">{days === null ? <span className="text-soft text-xs">—</span> : days <= 90 ? <Badge tone={days < 0 || days <= 30 ? 'rose' : 'amber'}><CalendarClock className="size-3" aria-hidden />{days < 0 ? 'Expiré' : `J-${days}`}</Badge> : <span className="text-xs text-muted num">{new Date(expiry!).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}</span>}</td>
+                      <td><StatusBadge map={STOCK_STATE} value={r.state} /></td>
+                      <td className="text-right whitespace-nowrap">
+                        <button className="btn-ghost btn-sm" onClick={() => setOp({ op: 'entree', productId: r.p.id })}>Entrée</button>
+                        <button className="btn-ghost btn-sm" onClick={() => setOp({ op: 'ajustement', productId: r.p.id })}>Ajuster</button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

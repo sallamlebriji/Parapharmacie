@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useLandingMotion } from '../../lib/landingMotion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, BarChart3, Boxes, Building2, CalendarClock, Check, ChevronDown, CreditCard, Crown, Gift, LayoutDashboard,
@@ -9,7 +10,7 @@ import { PRODUCT_ROWS } from '../../data/catalog'
 import { money } from '../../lib/format'
 import { Logo } from '../../components/Logo'
 import { ProductVisual } from '../../components/ProductVisual'
-import { Field, Tabs, cx, toast } from '../../components/ui'
+import { AnimatedNumber, Field, Tabs, cx, toast } from '../../components/ui'
 
 const P = (i: number) => { const r = PRODUCT_ROWS[i]; return { name: r[0], brand: r[1], shape: r[4], color: r[5], price: r[8] } }
 // Lightweight SVG sparkline so the marketing page doesn't pull in the charting library.
@@ -123,10 +124,12 @@ export default function Landing() {
   const [cycle, setCycle] = useState<'mois' | 'an'>('mois')
   const [faq, setFaq] = useState(0)
   const [demo, setDemo] = useState({ name: '', pharmacy: '', city: '', phone: '' })
+  const root = useRef<HTMLDivElement>(null)
+  useLandingMotion(root)
 
   return (
-    <div className="bg-ivory">
-      <header className="sticky top-0 z-40 bg-ivory/85 backdrop-blur border-b border-line/60">
+    <div ref={root} className="bg-ivory">
+      <header className="sticky top-0 z-40 glass border-b border-line/60">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-8">
           <Link to="/"><Logo /></Link>
           <nav className="hidden md:flex gap-6 text-sm text-muted">
@@ -144,44 +147,71 @@ export default function Landing() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-champagne-100),transparent_55%),radial-gradient(ellipse_at_top_left,var(--color-sage-100),transparent_50%)]" />
+        <div className="pointer-events-none absolute left-1/2 top-40 -translate-x-1/2 size-[42rem] rounded-full bg-teal-100/40 blur-3xl animate-breathe" aria-hidden />
+        <HeroCube />
         <div className="relative max-w-7xl mx-auto px-4 pt-16 md:pt-24 pb-10 text-center">
-          <div className="inline-flex items-center gap-2 chip h-7 px-3 bg-surface border border-line text-muted"><Sparkles className="size-3.5 text-champagne-400" /> ERP · POS · CRM · E-commerce · Fidélité — une seule plateforme</div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl leading-[1.04] mt-6 max-w-4xl mx-auto">La gestion intelligente de votre <em className="italic text-sage-600">parapharmacie</em>.</h1>
-          <p className="text-lg md:text-xl text-muted mt-6 max-w-2xl mx-auto">Stock, ventes, commandes, clients et boutique en ligne réunis dans une seule plateforme.</p>
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
+          <div data-hero-fade className="inline-flex items-center gap-2 chip h-7 px-3 bg-surface border border-line text-muted"><Sparkles className="size-3.5 text-champagne-400" /> ERP · POS · CRM · E-commerce · Fidélité — une seule plateforme</div>
+          <h1 data-split className="text-4xl sm:text-5xl md:text-display mt-6 max-w-4xl mx-auto [perspective:900px]">
+            <SplitWords text="La gestion intelligente de votre" />{' '}
+            <SplitWords text="parapharmacie." className="italic text-sage-600" />
+          </h1>
+          <p data-hero-fade className="text-lg md:text-xl text-muted mt-6 max-w-2xl mx-auto">Stock, ventes, commandes, clients et boutique en ligne réunis dans une seule plateforme.</p>
+          <div data-hero-fade className="flex flex-wrap justify-center gap-3 mt-8">
             <Link to="/inscription" className="btn-primary h-12 px-6">Démarrer l’essai gratuit <ArrowRight className="size-4" /></Link>
             <Link to="/connexion" className="btn-secondary h-12 px-6">Explorer la démo</Link>
             <Link to="/boutique" className="btn-ghost h-12 px-6">Voir une boutique client</Link>
           </div>
-          <div className="text-xs text-soft mt-4">14 jours gratuits · Sans carte bancaire · Sans engagement</div>
-          <div className="relative mt-14 max-w-5xl mx-auto">
-            <DashboardMock />
-            <div className="hidden lg:block absolute -right-16 -bottom-10"><PhoneMock /></div>
-            <div className="hidden md:flex absolute -left-10 bottom-16 card shadow-lift p-3 items-center gap-3 text-left animate-fade-up">
-              <span className="size-9 rounded-xl bg-rose-soft text-rose-ink grid place-items-center"><CalendarClock className="size-4" /></span>
+          <div data-hero-fade className="text-xs text-soft mt-4">14 jours gratuits · Sans carte bancaire · Sans engagement</div>
+          <div className="relative mt-14 max-w-5xl mx-auto [perspective:1600px]">
+            <div data-hero-mock className="[transform-style:preserve-3d] origin-top">
+              <DashboardMock />
+            </div>
+            <div className="hidden lg:block absolute -right-16 -bottom-10 animate-float"><PhoneMock /></div>
+            <div className="hidden md:flex absolute -left-10 bottom-16 card shadow-lift p-3 items-center gap-3 text-left animate-float [animation-delay:-3s]">
+              <span className="relative size-9 rounded-xl bg-rose-soft text-rose-ink grid place-items-center">
+                <CalendarClock className="size-4" />
+                <span className="absolute inset-0 rounded-xl border border-rose-ink/40 animate-ring" aria-hidden />
+              </span>
               <div><div className="text-xs font-medium">12 produits expirent bientôt</div><div className="text-[10px] text-muted">Suggestion : promo −30 % automatique</div></div>
             </div>
           </div>
+          <a href="#chiffres" className="hidden md:inline-flex flex-col items-center gap-2 mt-12 text-[11px] uppercase tracking-[0.16em] text-soft hover:text-ink" aria-label="Défiler vers la suite">
+            <span className="relative h-9 w-5 rounded-full border border-sand"><span className="absolute left-1/2 top-2 -ml-0.5 h-2 w-1 rounded-full bg-sage-400 animate-scroll-cue" /></span>
+            Découvrir
+          </a>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {/* Constant, quiet marquee of what the platform covers */}
+      <div className="border-y border-line bg-surface/60 overflow-hidden py-4" aria-hidden>
+        <div className="flex w-max animate-marquee gap-10 pr-10 text-sm text-muted">
+          {[0, 1].map((k) => (
+            <div key={k} className="flex gap-10">
+              {['Stock par lots', 'Alertes d’expiration', 'Caisse POS', 'Boutique en ligne', 'Programme fidélité', 'Achats fournisseurs', 'Multi-boutiques', 'Analytics', 'Marketing automatisé', 'Rôles & permissions'].map((x) => (
+                <span key={x} className="flex items-center gap-3 whitespace-nowrap"><span className="size-1.5 rounded-full bg-sage-300" />{x}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <section id="chiffres" className="max-w-7xl mx-auto px-4 py-16">
+        <div data-reveal-group className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[['−35 %', 'de pertes liées aux péremptions'], ['+22 %', 'de CA avec la boutique en ligne'], ['3 h', 'gagnées par semaine sur le stock'], ['1', 'plateforme au lieu de 5 outils']].map(([v, l]) => (
-            <div key={l}><div className="font-display text-4xl md:text-5xl text-sage-700">{v}</div><div className="text-sm text-muted mt-2">{l}</div></div>
+            <div key={l}><div className="font-display text-4xl md:text-5xl text-sage-700"><AnimatedNumber value={v} /></div><div className="text-sm text-muted mt-2">{l}</div></div>
           ))}
         </div>
       </section>
 
       <section id="fonctionnalites" className="max-w-7xl mx-auto px-4 py-12">
-        <div className="max-w-2xl">
+        <div data-reveal className="max-w-2xl">
           <div className="text-[11px] uppercase tracking-[0.16em] text-champagne-600">Présentation</div>
           <h2 className="text-3xl md:text-5xl mt-2">Tout votre métier, enfin réuni.</h2>
           <p className="text-muted mt-4 text-lg">Conçu avec des pharmaciens et gérants de parapharmacie, Paraflow remplace la caisse, les fichiers Excel de stock, l’outil e-commerce et le logiciel de fidélité — sans compromis sur la simplicité.</p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+        <div data-reveal-group className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
           {FEATURES.map((f) => (
-            <div key={f.title} className="card p-5 transition hover:shadow-lift hover:-translate-y-0.5">
+            <div key={f.title} className="card card-hover p-5">
               <span className="size-10 rounded-xl bg-sage-50 text-sage-600 grid place-items-center"><f.icon className="size-5" strokeWidth={1.6} /></span>
               <div className="font-medium mt-4">{f.title}</div>
               <p className="text-sm text-muted mt-1">{f.text}</p>
@@ -249,7 +279,7 @@ export default function Landing() {
             <h2 className="text-3xl md:text-5xl mt-2">Un plan pour chaque parapharmacie</h2>
             <div className="mt-6 inline-flex"><Tabs value={cycle} onChange={setCycle} tabs={[{ id: 'mois', label: 'Mensuel' }, { id: 'an', label: 'Annuel · 2 mois offerts' }]} /></div>
           </div>
-          <div className="grid md:grid-cols-3 gap-5 mt-10">
+          <div data-reveal-group className="grid md:grid-cols-3 gap-5 mt-10">
             {PLANS.map((p) => (
               <div key={p.id} className={cx('card p-7 flex flex-col relative', p.id === 'pro' && 'ring-2 ring-sage-500 md:-translate-y-3')}>
                 {p.id === 'pro' && <span className="absolute -top-3 left-1/2 -translate-x-1/2 chip bg-accent text-on-accent h-6 px-3">Le plus choisi</span>}
@@ -268,7 +298,7 @@ export default function Landing() {
       </section>
 
       <section id="faq" className="max-w-3xl mx-auto px-4 py-20">
-        <h2 className="text-3xl md:text-5xl text-center">Questions fréquentes</h2>
+        <h2 data-reveal className="text-3xl md:text-5xl text-center">Questions fréquentes</h2>
         <div className="mt-10 divide-y divide-line border-y border-line">
           {FAQ.map(([q, a], i) => (
             <div key={q}>
@@ -280,7 +310,7 @@ export default function Landing() {
       </section>
 
       <section id="demo" className="max-w-6xl mx-auto px-4 pb-20">
-        <div className="rounded-[2rem] bg-sage-800 text-white p-8 md:p-14 grid md:grid-cols-2 gap-10 items-center">
+        <div data-reveal className="rounded-[2rem] bg-sage-800 text-white p-8 md:p-14 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <div className="text-[11px] uppercase tracking-[0.16em] text-champagne-200">Démonstration</div>
             <h2 className="text-3xl md:text-4xl mt-2">Voyez Paraflow avec vos propres produits.</h2>
@@ -317,13 +347,46 @@ export default function Landing() {
 function Showcase({ eyebrow, title, points, children, reverse }: { eyebrow: string; title: string; points: string[]; children: React.ReactNode; reverse?: boolean }) {
   return (
     <section className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-      <div className={cx(reverse && 'lg:order-2')}>
+      <div data-reveal className={cx(reverse && 'lg:order-2')}>
         <div className="text-[11px] uppercase tracking-[0.16em] text-champagne-600">{eyebrow}</div>
         <h3 className="text-3xl md:text-4xl mt-2 leading-tight">{title}</h3>
         <ul className="mt-6 space-y-3">{points.map((p) => <li key={p} className="flex gap-3 text-muted"><span className="size-5 rounded-full bg-sage-100 text-sage-700 grid place-items-center shrink-0 mt-0.5"><Check className="size-3" /></span>{p}</li>)}</ul>
       </div>
-      <div className={cx(reverse && 'lg:order-1')}>{children}</div>
+      <div data-reveal className={cx(reverse && 'lg:order-1')}><div data-parallax="-6">{children}</div></div>
     </section>
+  )
+}
+
+/** Headline split into words for the GSAP reveal (screen readers get the full sentence). */
+function SplitWords({ text, className }: { text: string; className?: string }) {
+  const words = text.split(' ')
+  return (
+    <span className={className}>
+      {words.map((w, i) => (
+        <span key={i} className="word inline-block overflow-hidden align-bottom pb-[0.08em] -mb-[0.08em]" aria-hidden>
+          <span className="inline-block will-change-transform">{w}</span>{i < words.length - 1 && ' '}
+        </span>
+      ))}
+      <span className="sr-only">{text}</span>
+    </span>
+  )
+}
+
+/** Decorative CSS-3D cube (6 faces, one slow turn every 14 s) — pure CSS, hidden on small screens. */
+function HeroCube() {
+  const faces = [
+    { t: 'rotateY(0deg) translateZ(34px)', l: 'Stock' }, { t: 'rotateY(90deg) translateZ(34px)', l: 'POS' },
+    { t: 'rotateY(180deg) translateZ(34px)', l: 'CRM' }, { t: 'rotateY(-90deg) translateZ(34px)', l: 'Web' },
+    { t: 'rotateX(90deg) translateZ(34px)', l: '' }, { t: 'rotateX(-90deg) translateZ(34px)', l: '' },
+  ]
+  return (
+    <div className="hidden xl:block absolute left-[8%] top-44 [perspective:600px] animate-float" aria-hidden>
+      <div className="relative size-[68px] [transform-style:preserve-3d] animate-cube">
+        {faces.map((f, i) => (
+          <span key={i} className="absolute inset-0 grid place-items-center rounded-xl border border-sage-200 bg-surface/70 text-[10px] font-semibold uppercase tracking-[0.14em] text-sage-600 backdrop-blur-sm [backface-visibility:hidden]" style={{ transform: f.t }}>{f.l}</span>
+        ))}
+      </div>
+    </div>
   )
 }
 
